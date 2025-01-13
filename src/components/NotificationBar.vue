@@ -15,6 +15,10 @@ const props = defineProps({
   color: {
     type: String,
     required: true
+  },
+  closable: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -49,10 +53,10 @@ const hasRightSlot = computed(() => slots.right)
           size="24"
           class="md:mr-2"
         />
-        <span class="text-center md:text-left md:py-2"><slot /></span>
+        <span class="text-center md:text-left md:py-2 mx-1"><slot /></span>
       </div>
       <slot v-if="hasRightSlot" name="right" />
-      <BaseButton v-else :icon="mdiClose" small rounded-full color="white" @click="dismiss" />
+      <BaseButton v-else-if="closable" :icon="mdiClose" small rounded-full color="white" @click="dismiss" />
     </BaseLevel>
   </div>
 </template>

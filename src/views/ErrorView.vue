@@ -4,6 +4,7 @@ import CardBox from '@/components/CardBox.vue';
 import BaseButton from '@/components/BaseButton.vue';
 import BaseButtons from '@/components/BaseButtons.vue';
 import LayoutGuest from '@/layouts/LayoutGuest.vue';
+import router from '@/router';
 
 const props = defineProps(['message']);
 </script>
@@ -20,7 +21,7 @@ const props = defineProps(['message']);
 
         <template #footer>
           <BaseButtons>
-            <BaseButton label="返回主页" to="/" color="info" />
+            <BaseButton label="返回" @click="router.back" color="info" />
           </BaseButtons>
         </template>
       </CardBox>

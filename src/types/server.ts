@@ -18,7 +18,11 @@ export type ServerInfo = {
   outputLines: number;
   inputLines: number;
   cpuUsage: number;
-  stat: object | null;
+  stat: {
+    serverUp: boolean;
+    currentPlayers: string;
+    maximumPlayers: string;
+  } | null;
 };
 
 export type Configuration = {

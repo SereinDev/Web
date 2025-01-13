@@ -28,6 +28,7 @@ const buttonClick = (event) => {
     <div class="flex items-center py-3 grow font-bold" :class="[icon ? 'px-4' : 'px-6']">
       <BaseIcon v-if="icon" :path="icon" class="mr-3" />
       {{ title }}
+      <slot />
     </div>
     <button
       v-if="buttonIcon"

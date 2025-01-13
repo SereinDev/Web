@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { containerMaxW } from '@/config.js';
 import BaseLevel from '@/components/BaseLevel.vue';
+import { gitInfo } from '@/utils/constants';
 </script>
 
 <template>
@@ -13,8 +14,9 @@ import BaseLevel from '@/components/BaseLevel.vue';
           href="https://sereindev.github.io/"
           target="_blank"
           class="text-blue-600"
-          >Serein</a
-        >.
+          >Serein
+        </a>
+        <code :title="gitInfo.sha"> @ {{ gitInfo.shortSha }} </code>
       </div>
     </BaseLevel>
   </footer>

@@ -3,14 +3,15 @@ import CardBoxWidget from '@/components/CardBoxWidget.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
-import { getAllServers, getCpuInfo, getMemoryStatus } from '@/services/request';
+import { getCpuInfo, getMemoryStatus } from '@/services/request';
+import { getServersWithCache } from '@/services/serverManager';
 import { CpuInfo, MemoryStatus } from '@/types/apis/hardware';
 import { Servers } from '@/types/server';
 import {
-  mdiChartTimelineVariant,
   mdiCpu64Bit,
   mdiMemory,
-  mdiServer,
+  mdiMonitorDashboard,
+  mdiServer
 } from '@mdi/js';
 import { onUnmounted, reactive } from 'vue';
 
@@ -24,7 +25,7 @@ const infos: { cpu?: CpuInfo; memory?: MemoryStatus; servers?: Servers } =
 async function update() {
   infos.cpu = await getCpuInfo();
   infos.memory = await getMemoryStatus();
-  infos.servers = await getAllServers();
+  infos.servers = await getServersWithCache();
 }
 
 update();
@@ -37,7 +38,7 @@ onUnmounted(() => clearInterval(timer));
   <LayoutAuthenticated>
     <SectionMain>
       <SectionTitleLineWithButton
-        :icon="mdiChartTimelineVariant"
+        :icon="mdiMonitorDashboard"
         title="总览"
         main
         no-button

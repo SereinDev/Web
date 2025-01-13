@@ -4,10 +4,11 @@ import { Packet } from '@/types/apis/packet';
 import { Servers } from '@/types/server';
 import axios, { AxiosError } from 'axios';
 
+const axiosInstance = axios.create({ baseURL: '/api' });
 const appJsonHeader = {
   'Content-Type': 'application/json',
 };
-const axiosInstance = axios.create({ baseURL: '/api' });
+
 axiosInstance.defaults.headers.delete = appJsonHeader;
 axiosInstance.defaults.headers.put = appJsonHeader;
 axiosInstance.defaults.headers.post = appJsonHeader;
@@ -39,7 +40,22 @@ export async function getOS() {
   return (await axiosInstance.get<Packet<OSInfo>>('/hardware/os')).data.data;
 }
 
-export async function getAllServers() {
-  return (await axiosInstance.get<Packet<Servers>>('/servers'))
-    .data.data;
+export async function getServers() {
+  return (await axiosInstance.get<Packet<Servers>>('/servers')).data.data;
+}
+
+export async function startServer(id: string) {
+  await axiosInstance.get<Packet<void>>(`/servers/${id}/start`);
+}
+
+export async function stopServer(id: string) {
+  await axiosInstance.get<Packet<void>>(`/servers/${id}/stop`);
+}
+
+export async function terminateServer(id: string) {
+  await axiosInstance.get<Packet<void>>(`/servers/${id}/terminate`);
+}
+
+export async function inputServer(id: string, input: string) {
+  await axiosInstance.post<Packet<void>>(`/servers/${id}/input`, [input]);
 }

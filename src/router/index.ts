@@ -17,6 +17,30 @@ const routes: RouteRecordRaw[] = [
   },
   {
     meta: {
+      title: '服务器',
+    },
+    path: '/servers',
+    name: 'servers',
+    component: () => import('@/views/ServersView.vue'),
+  },
+  {
+    meta: {
+      title: '服务器',
+    },
+    path: '/servers/:id',
+    name: 'server',
+    component: () => import('@/views/ServerView.vue'),
+  },
+  {
+    meta: {
+      title: '编辑配置',
+    },
+    path: '/servers/:id/configuration',
+    name: 'congiguration',
+    component: () => import('@/views/ConfigurationView.vue'),
+  },
+  {
+    meta: {
       title: '关于',
     },
     path: '/about',
