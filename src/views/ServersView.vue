@@ -9,6 +9,7 @@ import NotificationBar from '@/components/NotificationBar.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
+import { createNotify } from '@/services/notification';
 import { getFileName, getServersWithCache } from '@/services/serverManager';
 import { Server } from '@/types/server';
 import {
@@ -28,7 +29,11 @@ async function update(refresh: boolean = false) {
     servers.value = Object.entries(await getServersWithCache(refresh));
   } catch (error) {
     servers.value = [];
-    console.error(error);
+    createNotify({
+      type: 'danger',
+      title: '获取服务器失败',
+      message: String(error),
+    });
   }
 }
 

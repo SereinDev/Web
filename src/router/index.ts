@@ -41,6 +41,14 @@ const routes: RouteRecordRaw[] = [
   },
   {
     meta: {
+      title: '匹配',
+    },
+    path: '/matches',
+    name: 'matches',
+    component: () => import('@/views/MatchView.vue'),
+  },
+  {
+    meta: {
       title: '关于',
     },
     path: '/about',

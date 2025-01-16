@@ -39,11 +39,11 @@
   }
 
   tbody tr:nth-child(odd) {
-    @apply lg:bg-gray-100/50 lg:dark:bg-slate-800/50;
+    @apply lg:bg-gray-100/50 lg:dark:bg-slate-700/20;
   }
 
   td:before {
     content: attr(data-label);
-    @apply font-semibold pr-3 text-left lg:hidden;
+    @apply font-semibold pr-3 text-left lg:hidden break-keep;
   }
 }

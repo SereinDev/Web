@@ -1,7 +1,8 @@
-import { CpuInfo, MemoryStatus, OSInfo } from '@/types/apis/hardware';
-import { Metadata } from '@/types/apis/metadata';
-import { Packet } from '@/types/apis/packet';
-import { Servers } from '@/types/server';
+import { CpuInfo, MemoryStatus, OSInfo } from '@/types/hardware';
+import { Match } from '@/types/match';
+import { Metadata } from '@/types/metadata';
+import { Packet } from '@/types/packet';
+import { Server, Servers } from '@/types/server';
 import axios, { AxiosError } from 'axios';
 
 const axiosInstance = axios.create({ baseURL: '/api' });
@@ -44,6 +45,10 @@ export async function getServers() {
   return (await axiosInstance.get<Packet<Servers>>('/servers')).data.data;
 }
 
+export async function getServer(id: string) {
+  return (await axiosInstance.get<Packet<Server>>('/servers/' + id)).data.data;
+}
+
 export async function startServer(id: string) {
   await axiosInstance.get<Packet<void>>(`/servers/${id}/start`);
 }
@@ -58,4 +63,20 @@ export async function terminateServer(id: string) {
 
 export async function inputServer(id: string, input: string) {
   await axiosInstance.post<Packet<void>>(`/servers/${id}/input`, [input]);
+}
+
+export async function getMatches() {
+  return (await axiosInstance.get<Packet<Match[]>>('/matches')).data.data;
+}
+
+export async function addMatch(match: Match) {
+  await axiosInstance.post<Packet<void>>('/matches', match);
+}
+
+export async function editMatch(id: number, match: Match) {
+  await axiosInstance.put<Packet<void>>('/matches/' + id, match);
+}
+
+export async function removeMatch(id: number) {
+  await axiosInstance.delete<Packet<void>>('/matches/' + id);
 }

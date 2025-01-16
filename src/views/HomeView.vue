@@ -5,7 +5,7 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import { getCpuInfo, getMemoryStatus } from '@/services/request';
 import { getServersWithCache } from '@/services/serverManager';
-import { CpuInfo, MemoryStatus } from '@/types/apis/hardware';
+import { CpuInfo, MemoryStatus } from '@/types/hardware';
 import { Servers } from '@/types/server';
 import {
   mdiCpu64Bit,

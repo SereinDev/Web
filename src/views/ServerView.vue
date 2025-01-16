@@ -18,9 +18,9 @@ import {
   stopServer,
   terminateServer,
 } from '@/services/request';
+import ServerConnection from '@/services/serverConnection';
 import { getServersWithCache } from '@/services/serverManager';
 import { Server } from '@/types/server';
-import { msToTime } from '@/utils/formatter';
 import {
   mdiAlert,
   mdiArrowUp,
@@ -37,8 +37,8 @@ import {
   mdiText,
   mdiTimelapse,
 } from '@mdi/js';
-import { computed, onUnmounted, Ref, ref } from 'vue';
 import numeral from 'numeral';
+import { computed, onUnmounted, Ref, ref } from 'vue';
 
 const id = computed(() => router.currentRoute.value.params['id'] as string);
 const server: Ref<Server> = ref();
@@ -47,11 +47,18 @@ const timer = setInterval(update, 1000);
 const input = ref('');
 const inputRef = ref<{ inputEl: HTMLElement }>();
 const isModalActive = ref(false);
+const connection = new ServerConnection(id.value);
 
 async function update() {
   try {
     server.value = (await getServersWithCache())[id.value];
-  } catch (error) {}
+  } catch (error) {
+    createNotify({
+      type: 'danger',
+      title: `获取服务器（Id=${id}）失败`,
+      message: String(error),
+    });
+  }
 
   online.value = Boolean(server.value);
 }
@@ -94,6 +101,7 @@ async function operate(type: string) {
 
 update();
 onUnmounted(() => clearInterval(timer));
+onUnmounted(connection.dispose);
 </script>
 
 <template>

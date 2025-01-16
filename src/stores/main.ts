@@ -3,6 +3,7 @@ import { ref } from 'vue';
 
 export const useMainStore = defineStore('main', () => {
   const isFieldFocusRegistered = ref(false);
+  const accessToken = ref<string | null>(null);
 
-  return { isFieldFocusRegistered };
+  return { isFieldFocusRegistered, accessToken };
 });

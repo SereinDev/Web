@@ -5,7 +5,7 @@ import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import { getMetadata } from '@/services/request';
-import { Metadata } from '@/types/apis/metadata';
+import { Metadata } from '@/types/metadata';
 import { gitInfo } from '@/utils/constants';
 import { mdiInformationOutline } from '@mdi/js';
 import { ref } from 'vue';

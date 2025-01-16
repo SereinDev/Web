@@ -2,13 +2,13 @@
 defineProps({
   title: {
     type: String,
-    required: true
-  }
-})
+    required: true,
+  },
+});
 </script>
 
 <template>
-  <div class="flex items-center justify-between mb-3">
+  <div class="flex items-center justify-between mb-3 select-none">
     <h1 class="text-2xl">
       {{ title }}
     </h1>
