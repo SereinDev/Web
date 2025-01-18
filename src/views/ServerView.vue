@@ -18,7 +18,7 @@ import {
   stopServer,
   terminateServer,
 } from '@/services/request';
-import ServerConnection from '@/services/serverConnection';
+import { getServerConnection } from '@/services/serverConnection';
 import { getServersWithCache } from '@/services/serverManager';
 import { Server } from '@/types/server';
 import {
@@ -38,7 +38,7 @@ import {
   mdiTimelapse,
 } from '@mdi/js';
 import numeral from 'numeral';
-import { computed, onUnmounted, Ref, ref } from 'vue';
+import { computed, onBeforeUnmount, Ref, ref } from 'vue';
 
 const id = computed(() => router.currentRoute.value.params['id'] as string);
 const server: Ref<Server> = ref();
@@ -47,17 +47,22 @@ const timer = setInterval(update, 1000);
 const input = ref('');
 const inputRef = ref<{ inputEl: HTMLElement }>();
 const isModalActive = ref(false);
-const connection = new ServerConnection(id.value);
+const connection = getServerConnection(id.value);
 
-async function update() {
+async function update(refresh: boolean = false) {
   try {
-    server.value = (await getServersWithCache())[id.value];
+    server.value = (await getServersWithCache(refresh))[id.value];
   } catch (error) {
-    createNotify({
-      type: 'danger',
-      title: `获取服务器（Id=${id}）失败`,
-      message: String(error),
-    });
+    if (online.value) {
+      createNotify({
+        type: 'danger',
+        title: `获取服务器（Id=${id.value}）失败`,
+        message: String(error),
+        duration: 0,
+      });
+    }
+
+    online.value = false;
   }
 
   online.value = Boolean(server.value);
@@ -100,8 +105,8 @@ async function operate(type: string) {
 }
 
 update();
-onUnmounted(() => clearInterval(timer));
-onUnmounted(connection.dispose);
+onBeforeUnmount(() => clearInterval(timer));
+onBeforeUnmount(connection.dispose);
 </script>
 
 <template>
@@ -109,6 +114,7 @@ onUnmounted(connection.dispose);
     <CardBoxModal
       v-model="isModalActive"
       title="确定要强制结束进程吗"
+      button="danger"
       button-label="确认"
       has-cancel
       @confirm="() => operate('terminate')"
@@ -134,7 +140,7 @@ onUnmounted(connection.dispose);
             :icon="mdiRefresh"
             color="whiteDark"
             title="刷新"
-            @click="update"
+            @click="() => update(true)"
           />
         </BaseButtons>
       </SectionTitleLineWithButton>
@@ -185,7 +191,7 @@ onUnmounted(connection.dispose);
 
       <SectionTitleLineWithButton :icon="mdiConsole" title="控制台" no-button />
       <CardBox has-component-layout class="overflow-hidden mb-5">
-        <Console :datas="[]" />
+        <Console :datas="connection.output.value" />
       </CardBox>
 
       <div class="flex w-full">
@@ -226,10 +232,10 @@ onUnmounted(connection.dispose);
           />
           <BaseButton color="lightDark" :icon="mdiRefresh" label="重启" />
           <BaseButton
-            color="lightDark"
+            color="danger"
             :icon="mdiStop"
             label="强制结束"
-            class="text-red-600"
+            outline
             @click="() => (isModalActive = true)"
           />
         </div>

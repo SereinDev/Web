@@ -9,6 +9,7 @@ import NotificationBar from '@/components/NotificationBar.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
+import router from '@/router';
 import { createNotify } from '@/services/notification';
 import { getFileName, getServersWithCache } from '@/services/serverManager';
 import { Server } from '@/types/server';
@@ -45,7 +46,12 @@ update();
     <SectionMain>
       <SectionTitleLineWithButton :icon="mdiServerOutline" title="服务器" main>
         <BaseButtons>
-          <BaseButton :icon="mdiPlus" color="whiteDark" title="添加" />
+          <BaseButton
+            :icon="mdiPlus"
+            color="whiteDark"
+            title="添加"
+            @click="() => router.push('/servers/:new/configuration')"
+          />
           <BaseButton
             :icon="mdiRefresh"
             color="whiteDark"

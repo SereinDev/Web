@@ -14,6 +14,11 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://127.0.0.1:30000/',
+      '/ws/server': {
+        target: 'ws://127.0.0.1:30000',
+        changeOrigin: true,
+        ws: true,
+      },
     },
   },
 });

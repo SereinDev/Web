@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { mdiForwardburger, mdiBackburger, mdiMenu } from '@mdi/js';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import AsideMenu from '@/components/AsideMenu.vue';
+import BaseIcon from '@/components/BaseIcon.vue';
+import FooterBar from '@/components/FooterBar.vue';
+import NavBar from '@/components/NavBar.vue';
+import NavBarItemPlain from '@/components/NavBarItemPlain.vue';
 import menuAside from '@/menuAside.js';
 import menuNavBar from '@/menuNavBar.js';
 import { useDarkModeStore } from '@/stores/darkMode.js';
-import BaseIcon from '@/components/BaseIcon.vue';
-import FormControl from '@/components/FormControl.vue';
-import NavBar from '@/components/NavBar.vue';
-import NavBarItemPlain from '@/components/NavBarItemPlain.vue';
-import AsideMenu from '@/components/AsideMenu.vue';
-import FooterBar from '@/components/FooterBar.vue';
-import BaseLevel from '@/components/BaseLevel.vue';
+import { useMainStore } from '@/stores/main';
+import { mdiBackburger, mdiForwardburger, mdiMenu } from '@mdi/js';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const layoutAsidePadding = 'xl:pl-60';
 const darkModeStore = useDarkModeStore();
+const mainStore = useMainStore();
 
 const router = useRouter();
 
@@ -32,7 +32,8 @@ const menuClick = (event, item) => {
   }
 
   if (item.isLogout) {
-    //
+    mainStore.accessToken = '';
+    router.push('/login');
   }
 };
 </script>

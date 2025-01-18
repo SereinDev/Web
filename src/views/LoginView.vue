@@ -1,34 +1,69 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
-import { useRouter } from 'vue-router';
-import {
-  mdiAccount,
-  mdiAlert,
-  mdiAsterisk,
-  mdiFormTextboxPassword,
-} from '@mdi/js';
-import SectionFullScreen from '@/components/SectionFullScreen.vue';
-import CardBox from '@/components/CardBox.vue';
-import FormCheckRadio from '@/components/FormCheckRadio.vue';
-import FormField from '@/components/FormField.vue';
-import FormControl from '@/components/FormControl.vue';
 import BaseButton from '@/components/BaseButton.vue';
 import BaseButtons from '@/components/BaseButtons.vue';
-import LayoutGuest from '@/layouts/LayoutGuest.vue';
+import CardBox from '@/components/CardBox.vue';
+import FormCheckRadio from '@/components/FormCheckRadio.vue';
+import FormControl from '@/components/FormControl.vue';
+import FormField from '@/components/FormField.vue';
 import NotificationBar from '@/components/NotificationBar.vue';
+import SectionFullScreen from '@/components/SectionFullScreen.vue';
+import LayoutGuest from '@/layouts/LayoutGuest.vue';
+import { createNotify } from '@/services/notification';
+import { getRoot } from '@/services/request';
+import { useMainStore } from '@/stores/main';
 import { name } from '@/utils/constants';
+import { mdiAlert, mdiFormTextboxPassword } from '@mdi/js';
+import { reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+const checked = ref(false);
+const mainStore = useMainStore();
 const form = reactive({
-  login: 'john.doe',
-  pass: 'highly-secure-password-fYjUw-',
-  remember: true,
+  accessToken: mainStore.accessToken,
+  remember: mainStore.remember,
 });
 
 const router = useRouter();
 
-const submit = () => {
-  router.push('/overview');
-};
+async function submit() {
+  if (!(await check())) {
+    createNotify({
+      type: 'danger',
+      title: '登录凭证无效',
+    });
+  }
+}
+
+async function check(): Promise<boolean> {
+  try {
+    const response = await getRoot();
+
+    if (response.status === 200) {
+      router.push('/overview');
+    }
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function update() {
+  mainStore.accessToken = form.accessToken;
+  mainStore.remember = form.remember;
+
+  localStorage.setItem('serein.remember', String(form.remember));
+  if (form.remember) {
+    localStorage.setItem('serein.accessToken', form.accessToken);
+  } else {
+    localStorage.removeItem('serein.accessToken');
+  }
+}
+
+if (!checked.value) {
+  check();
+  checked.value = true;
+}
 </script>
 
 <template>
@@ -45,10 +80,11 @@ const submit = () => {
         </div>
         <FormField label="Authorization Token" help="登录凭证">
           <FormControl
-            v-model="form.login"
+            v-model="form.accessToken"
             :icon="mdiFormTextboxPassword"
             type="password"
             name="password"
+            @update:model-value="update"
           />
         </FormField>
 
@@ -58,6 +94,7 @@ const submit = () => {
           label="保存登录状态"
           title="将Authorization Token保存在本地"
           :input-value="true"
+          @update:model-value="update"
         />
 
         <NotificationBar

@@ -11,12 +11,12 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import { createNotify } from '@/services/notification';
 import {
-  addMatch,
-  getMatches,
-  removeMatch,
-  editMatch,
+  addSchedule,
+  editSchedule,
+  getSchedules,
+  removeSchedule,
 } from '@/services/request';
-import { Match, MatchFieldType } from '@/types/match';
+import { Schedule } from '@/types/schedule';
 import {
   mdiFormatListBulleted,
   mdiPencil,
@@ -26,18 +26,10 @@ import {
 } from '@mdi/js';
 import { computed, reactive, ref } from 'vue';
 
-const options = [
-  { id: 0, label: '禁用' },
-  { id: 1, label: '服务器输入' },
-  { id: 2, label: '服务器输出' },
-  { id: 3, label: '群聊消息' },
-  { id: 4, label: '私聊消息' },
-  { id: 5, label: '自身消息' },
-];
-const current = ref({} as Match);
+const current = ref({} as Schedule);
 const isModalActive = ref(false);
 const isModalDangerActive = ref(false);
-const items = ref([] as Match[]);
+const items = ref([] as Schedule[]);
 const perPage = ref(10);
 const currentPage = ref(0);
 const itemsPaginated = computed(() =>
@@ -60,12 +52,12 @@ const pagesList = computed(() => {
 
 async function update() {
   try {
-    items.value = await getMatches();
+    items.value = await getSchedules();
   } catch (error) {
     items.value = [];
     createNotify({
       type: 'danger',
-      title: '获取匹配失败',
+      title: '获取定时任务失败',
       message: String(error),
     });
   }
@@ -74,14 +66,14 @@ async function update() {
 async function confirm() {
   if (!current.value.id) {
     try {
-      await addMatch(current.value);
+      await addSchedule(current.value);
 
       createNotify({ title: '新建成功', type: 'success' });
     } catch (error) {
       isModalActive.value = true;
       createNotify({
         type: 'danger',
-        title: '新建匹配失败',
+        title: '新建定时任务失败',
         message: String(error),
       });
     }
@@ -89,13 +81,13 @@ async function confirm() {
     try {
       const id = current.value.id;
       current.value.id = undefined;
-      await editMatch(id, current.value);
+      await editSchedule(id, current.value);
       createNotify({ title: '修改成功', type: 'success' });
     } catch (error) {
       isModalActive.value = true;
       createNotify({
         type: 'danger',
-        title: '修改匹配失败',
+        title: '修改定时任务失败',
         message: String(error),
       });
     }
@@ -110,7 +102,7 @@ async function remove() {
       return;
     }
 
-    await removeMatch(current.value.id);
+    await removeSchedule(current.value.id);
     createNotify({ title: '删除成功', type: 'success' });
   } catch (error) {
     createNotify({
@@ -139,43 +131,25 @@ update();
 
     <CardBoxModal
       v-model="isModalActive"
-      title="匹配编辑器"
+      title="定时任务编辑器"
       has-cancel
       @confirm="confirm"
     >
-      <FormField label="正则表达式" style="margin-bottom: 0">
-        <FormControl type="text" autocomplete="none" v-model="current.regExp" />
+      <FormCheckRadio
+        type="checkbox"
+        name="requireAdmin"
+        :input-value="false"
+        v-model="current.isEnabled"
+        label="启用"
+      />
+
+      <FormField label="Cron表达式" style="margin-bottom: 0">
+        <FormControl
+          type="text"
+          autocomplete="none"
+          v-model="current.expression"
+        />
       </FormField>
-
-      <div class="flex justify-center">
-        <FormField
-          label="匹配域"
-          class="w-1/2"
-          style="margin-bottom: 0; min-width: 150px"
-        >
-          <FormControl
-            type="text"
-            autocomplete="none"
-            :options="options"
-            v-model="current.fieldType"
-          />
-        </FormField>
-
-        <div class="w-full ml-8 flex mt-6">
-          <FormCheckRadio
-            type="checkbox"
-            name="requireAdmin"
-            :disabled="
-              ![MatchFieldType.GroupMsg, MatchFieldType.PrivateMsg].includes(
-                current.fieldType,
-              )
-            "
-            :input-value="false"
-            v-model="current.requireAdmin"
-            label="需要管理员权限"
-          />
-        </div>
-      </div>
 
       <FormField label="命令">
         <FormControl
@@ -193,18 +167,11 @@ update();
         />
       </FormField>
 
-      <FormField label="排除参数">
-        <FormControl
-          type="text"
-          autocomplete="none"
-          v-model="current.exclusions"
-        />
-      </FormField>
     </CardBoxModal>
     <SectionMain>
       <SectionTitleLineWithButton
         :icon="mdiFormatListBulleted"
-        title="匹配"
+        title="定时任务"
         main
       >
         <BaseButtons>
@@ -214,7 +181,7 @@ update();
             title="添加"
             @click="
               () => {
-                current = { fieldType: 0 } as Match;
+                current = { isEnabled: true } as Schedule;
                 isModalActive = true;
               }
             "
@@ -231,22 +198,17 @@ update();
       <table>
         <thead>
           <tr class="break-keep">
-            <th>正则表达式</th>
-            <th>匹配域</th>
+            <th>Cron表达式</th>
             <th>命令</th>
             <th>描述</th>
-            <th>需要管理权限</th>
-            <th>排除参数</th>
+            <th>状态</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="item in itemsPaginated" :key="item.id">
-            <td data-label="正则表达式">
-              <code class="break-all">{{ item.regExp }}</code>
-            </td>
-            <td data-label="匹配域" class="break-keep">
-              {{ options[item.fieldType].label }}
+            <td data-label="Cron表达式">
+              <code class="break-all">{{ item.expression }}</code>
             </td>
             <td data-label="命令">
               <code class="break-all">{{ item.command }}</code>
@@ -256,20 +218,15 @@ update();
                 {{ item.description }}
               </span>
             </td>
-            <td data-label="需要管理权限">
-              {{ item.requireAdmin ? '是' : '否' }}
-            </td>
-            <td data-label="排除参数">
-              <code class="break-all">
-                {{ item.exclusions }}
-              </code>
+            <td data-label="状态">
+              {{ item.isEnabled ? '启用' : '禁用' }}
             </td>
 
             <td class="before:hidden lg:w-1 whitespace-nowrap">
               <BaseButtons type="justify-start lg:justify-end" no-wrap>
                 <BaseButton
-                  outline
                   color="lightdark"
+                  outline
                   :icon="mdiPencil"
                   small
                   @click="
@@ -280,8 +237,8 @@ update();
                   "
                 />
                 <BaseButton
-                  outline
                   color="danger"
+                  outline
                   :icon="mdiTrashCan"
                   small
                   @click="

@@ -3,6 +3,7 @@ import BaseButton from '@/components/BaseButton.vue';
 import BaseButtons from '@/components/BaseButtons.vue';
 import BaseDivider from '@/components/BaseDivider.vue';
 import CardBox from '@/components/CardBox.vue';
+import CardBoxModal from '@/components/CardBoxModal.vue';
 import FormCheckRadio from '@/components/FormCheckRadio.vue';
 import FormControl from '@/components/FormControl.vue';
 import FormField from '@/components/FormField.vue';
@@ -10,6 +11,13 @@ import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import router from '@/router';
+import { createNotify } from '@/services/notification';
+import {
+  addServer,
+  removeServer,
+  updateServerConfiguration,
+} from '@/services/request';
+import { getServersWithCache } from '@/services/serverManager';
 import { Configuration } from '@/types/server';
 import {
   mdiArrowLeft,
@@ -29,7 +37,7 @@ import {
   mdiStopCircleOutline,
   mdiText,
 } from '@mdi/js';
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
 const encodings = [
   { id: 0, label: 'UTF-8' },
@@ -43,10 +51,7 @@ const styles = [
   { id: 1, label: '原始彩色' },
 ];
 
-const pathId = router.currentRoute.value.params['id'] || '';
-const readonly = pathId !== '@new';
-const id = ref(readonly ? pathId : '');
-const configuration = reactive({
+const defaultValue = reactive({
   pty: {
     forceWinPty: true,
   },
@@ -58,11 +63,110 @@ const configuration = reactive({
   outputCommandUserInput: true,
   outputStyle: 1,
   autoStopWhenCrashing: true,
+  lineTerminator: '\r\n',
 } as Configuration);
+
+const isModalDangerActive = ref(false);
+const pathId = (router.currentRoute.value.params['id'] as string) || '';
+const readonly = pathId !== ':new';
+const id = ref(readonly ? pathId : '');
+const configuration = ref<Configuration>(defaultValue);
+const stopCommands = computed({
+  get: () => configuration.value.stopCommands.join('\n'),
+  set: (value: string) => {
+    configuration.value.stopCommands = value.split('\n');
+  },
+});
+const lineTerminator = computed({
+  get: () =>
+    configuration.value?.lineTerminator
+      .replaceAll('\r', '\\r')
+      .replaceAll('\n', '\\n'),
+  set: (value: string) => {
+    configuration.value.lineTerminator = value
+      .replaceAll('\\r', '\r')
+      .replaceAll('\\n', '\n');
+  },
+});
+
+if (readonly) {
+  getServersWithCache().then((data) => {
+    if (data[id.value]) {
+      configuration.value = reactive(data[id.value].configuration);
+    }
+  });
+}
+
+async function confirm() {
+  if (readonly) {
+    try {
+      await updateServerConfiguration(id.value, configuration.value);
+      createNotify({
+        type: 'success',
+        title: '更新配置成功',
+      });
+      router.push('/servers/' + id.value);
+    } catch (error) {
+      createNotify({
+        type: 'danger',
+        title: '更新配置失败',
+        message: String(error),
+      });
+    }
+  } else {
+    if (!id.value) {
+      createNotify({
+        type: 'danger',
+        title: 'Id不能为空',
+      });
+      return;
+    }
+    try {
+      await addServer(id.value, configuration.value);
+      createNotify({
+        type: 'success',
+        title: '创建服务器成功',
+      });
+      router.push('/servers/' + id.value);
+    } catch (error) {
+      createNotify({
+        type: 'danger',
+        title: '创建服务器失败',
+        message: String(error),
+      });
+    }
+  }
+}
+
+async function remove() {
+  try {
+    await removeServer(id.value);
+    createNotify({
+      type: 'success',
+      title: '删除服务器成功',
+    });
+    router.push('/servers');
+  } catch (error) {
+    createNotify({
+      type: 'danger',
+      title: '删除服务器失败',
+      message: String(error),
+    });
+  }
+}
 </script>
 
 <template>
   <LayoutAuthenticated>
+    <CardBoxModal
+      v-model="isModalDangerActive"
+      button="danger"
+      has-cancel
+      :title="`确定要删除此服务器（Id=${id}）吗？`"
+      @confirm="remove"
+    >
+      <p>这将会永远失去！（真的很久！）</p>
+    </CardBoxModal>
     <SectionMain>
       <SectionTitleLineWithButton
         :icon="mdiFileEdit"
@@ -82,10 +186,16 @@ const configuration = reactive({
         <BaseButton
           :icon="mdiFileDocumentCheckOutline"
           color="lightDark"
-          @click="() => console.log(configuration)"
-          label="保存"
+          @click="confirm"
+          :label="readonly ? '保存' : '创建'"
         />
-        <BaseButton :icon="mdiDelete" color="danger" label="删除" />
+        <BaseButton
+          v-if="readonly"
+          :icon="mdiDelete"
+          color="danger"
+          label="删除"
+          @click="isModalDangerActive = true"
+        />
       </BaseButtons>
 
       <SectionTitleLineWithButton
@@ -231,7 +341,7 @@ const configuration = reactive({
         <FormField label="行终止符" help="用于标记每行的结尾" class="mt-3">
           <FormControl
             :icon="mdiContainEnd"
-            v-model="configuration.lineTerminator"
+            v-model="lineTerminator"
             type="text"
           />
         </FormField>
@@ -289,7 +399,7 @@ const configuration = reactive({
         <FormField label="关服命令" help="关闭服务器时输入的命令（一行一个）">
           <FormControl
             :icon="mdiStopCircleOutline"
-            v-model="configuration.stopCommands"
+            v-model="stopCommands"
             type="textarea"
             placeholder="一行一个"
           />

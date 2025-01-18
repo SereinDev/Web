@@ -11,7 +11,7 @@ import {
   mdiCpu64Bit,
   mdiMemory,
   mdiMonitorDashboard,
-  mdiServer
+  mdiServer,
 } from '@mdi/js';
 import { onUnmounted, reactive } from 'vue';
 
@@ -30,7 +30,7 @@ async function update() {
 
 update();
 
-const timer = setInterval(update, 1000);
+const timer = setInterval(update, 3000);
 onUnmounted(() => clearInterval(timer));
 </script>
 
@@ -49,7 +49,7 @@ onUnmounted(() => clearInterval(timer));
         <CardBoxWidget
           color="text-emerald-500"
           :icon="mdiCpu64Bit"
-          :value="infos.cpu?.percentProcessorTime"
+          :value="infos.cpu?.percentProcessorTime || 0"
           suffix="%"
           label="CPU"
         />
@@ -57,7 +57,7 @@ onUnmounted(() => clearInterval(timer));
           color="text-yellow-500"
           :icon="mdiMemory"
           :value="
-            infos.memory
+            infos.memory?.totalPhysical
               ? Math.floor(
                   100 -
                     (100 * infos.memory.availablePhysical) /
