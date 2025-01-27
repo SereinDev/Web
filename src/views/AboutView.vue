@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import BaseButton from '@/components/BaseButton.vue';
+import BaseButtons from '@/components/BaseButtons.vue';
 import CardBox from '@/components/CardBox.vue';
 import SectionBannerStarOnGitHub from '@/components/SectionBannerStarOnGitHub.vue';
 import SectionMain from '@/components/SectionMain.vue';
@@ -6,8 +8,8 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import { getMetadata } from '@/services/request';
 import { Metadata } from '@/types/metadata';
-import { gitInfo } from '@/utils/constants';
-import { mdiInformationOutline } from '@mdi/js';
+import { discussionUrl, docsUrl, gitInfo } from '@/utils/constants';
+import { mdiBookOpenOutline, mdiChatOutline, mdiInformationOutline } from '@mdi/js';
 import { ref } from 'vue';
 
 const metadata = ref<Metadata>();
@@ -41,6 +43,22 @@ getMetadata().then((res) => (metadata.value = res));
           <code v-else> ... </code>
         </div>
       </CardBox>
+      <BaseButtons class="mt-3">
+        <BaseButton
+          label="文档"
+          color="whitedark"
+          :href="docsUrl"
+          target="_blank"
+          :icon="mdiBookOpenOutline"
+        />
+        <BaseButton
+          label="讨论区"
+          color="whitedark"
+          :href="discussionUrl"
+          target="_blank"
+          :icon="mdiChatOutline"
+        />
+      </BaseButtons>
     </SectionMain>
   </LayoutAuthenticated>
 </template>

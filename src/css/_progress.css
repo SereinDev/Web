@@ -4,18 +4,18 @@
   }
 
   progress::-webkit-progress-bar {
-    @apply bg-blue-200;
+    @apply bg-sky-200;
   }
 
   progress::-webkit-progress-value {
-    @apply bg-blue-500;
+    @apply bg-sky-500;
   }
 
   progress::-moz-progress-bar {
-    @apply bg-blue-500;
+    @apply bg-sky-500;
   }
 
   progress::-ms-fill {
-    @apply bg-blue-500 border-0;
+    @apply bg-sky-500 border-0;
   }
 }

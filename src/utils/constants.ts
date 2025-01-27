@@ -1,4 +1,6 @@
-export const repoUrl = 'https://github.com/SereinDev/web';
+export const repoUrl = 'https://github.com/SereinDev/Web';
+export const docsUrl = 'https://sereindev.github.io';
+export const discussionUrl = 'https://github.com/orgs/SereinDev/discussions';
 export const name = 'Serein Web';
 export const gitInfo = {
   branch: GIT_BRANCH,

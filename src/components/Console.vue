@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { AnsiUp } from 'ansi_up';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { encode } from 'html-entities';
 
 const props = defineProps({
   datas: {
@@ -8,6 +9,7 @@ const props = defineProps({
     require: true,
     default: [],
   },
+  enableAnsi: Boolean,
 });
 
 const scrollToBottom = () =>
@@ -26,9 +28,11 @@ onMounted(scrollToBottom);
   <div id="console" ref="consoleRef" class="py-1 overflow-y-scroll">
     <div
       class="whitespace-pre-wrap break-all hover:bg-[#8881] px-3 transition-colors"
-      v-for="line in datas"
+      v-for="line of datas"
     >
-      <span v-html="ansiUp.ansi_to_html(line as string)"></span>
+      <span v-if="enableAnsi" v-html="ansiUp.ansi_to_html(line as string)">
+      </span>
+      <span v-else v-html="encode(line as string)"></span>
     </div>
   </div>
 </template>

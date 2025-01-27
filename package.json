@@ -1,6 +1,6 @@
 {
-  "name": "admin-one-vue-tailwind",
-  "version": "3.3.0",
+  "name": "serein-web",
+  "version": "1.0.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,9 +10,12 @@
   },
   "dependencies": {
     "@mdi/js": "^7.4.47",
+    "@sentry/vite-plugin": "^3.1.0",
+    "@sentry/vue": "^8.51.0",
     "ansi_up": "^6.0.2",
     "axios": "^1.7.9",
     "chart.js": "^4.4.7",
+    "html-entities": "^2.5.2",
     "numeral": "^2.0.6",
     "pinia": "^2.3.0",
     "vue": "^3.5.13",

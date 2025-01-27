@@ -18,11 +18,11 @@ import {
 } from '@/services/request';
 import { Schedule } from '@/types/schedule';
 import {
-  mdiFormatListBulleted,
+  mdiClockOutline,
   mdiPencil,
   mdiPlus,
   mdiRefresh,
-  mdiTrashCan,
+  mdiTrashCan
 } from '@mdi/js';
 import { computed, reactive, ref } from 'vue';
 
@@ -170,7 +170,7 @@ update();
     </CardBoxModal>
     <SectionMain>
       <SectionTitleLineWithButton
-        :icon="mdiFormatListBulleted"
+        :icon="mdiClockOutline"
         title="定时任务"
         main
       >

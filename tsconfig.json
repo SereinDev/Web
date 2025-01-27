@@ -6,7 +6,8 @@
     },
     "allowImportingTsExtensions": true,
     "noEmit": true,
-    "lib": ["esnext", "dom"]
+    "lib": ["esnext", "dom"],
+    "module": "NodeNext",
   },
   "exclude": ["node_modules", "dist"]
 }

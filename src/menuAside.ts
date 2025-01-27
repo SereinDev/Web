@@ -13,8 +13,8 @@ import {
 export default [
   {
     to: '/overview',
-    icon: mdiMonitorDashboard,
     label: '总览',
+    icon: mdiMonitorDashboard,
   },
   {
     to: '/servers',
@@ -42,12 +42,12 @@ export default [
     icon: mdiPuzzleOutline,
   },
   {
-    to: '/permissions',
+    // to: '/permissions',
     label: '权限组',
     icon: mdiKeyOutline,
   },
   {
-    to: '/binds',
+    // to: '/binds',
     label: '绑定',
     icon: mdiAccountLockOutline,
   },
@@ -56,23 +56,23 @@ export default [
     icon: mdiCogs,
     menu: [
       {
-        to: '/settings/connection',
+        // to: '/settings/connection',
         label: '连接',
       },
       {
-        to: '/settings/reaction',
+        // to: '/settings/reaction',
         label: '反应',
       },
       {
-        to: '/settings/webapi',
-        label: 'WebAPI',
+        // to: '/settings/webapi',
+        label: '网页服务器',
       },
       {
-        to: '/settings/app',
+        // to: '/settings/app',
         label: '应用',
       },
       {
-        to: '/settings/web',
+        // to: '/settings/web',
         label: '网页',
       },
     ],

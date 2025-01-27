@@ -52,6 +52,7 @@ onUnmounted(() => clearInterval(timer));
           :value="infos.cpu?.percentProcessorTime || 0"
           suffix="%"
           label="CPU"
+          :title="infos.cpu?.name"
         />
         <CardBoxWidget
           color="text-yellow-500"
@@ -67,10 +68,15 @@ onUnmounted(() => clearInterval(timer));
           "
           suffix="%"
           label="内存"
+          :title="
+            infos.memory?.totalPhysical
+              ? `${Math.floor((infos.memory.totalPhysical - infos.memory.availablePhysical) / 1024 / 1024)} / ${Math.floor(infos.memory.totalPhysical / 1024 / 1024)} MB`
+              : '-/-'
+          "
         />
         <CardBoxWidget
           :icon="mdiServer"
-          color="text-blue-500"
+          color="text-sky-500"
           label="服务器"
           :value="
             infos.servers

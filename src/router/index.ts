@@ -46,13 +46,30 @@ const routes: RouteRecordRaw[] = [
     path: '/matches',
     name: 'matches',
     component: () => import('@/views/MatchView.vue'),
-  },{
+  },
+  {
     meta: {
       title: '匹配',
     },
     path: '/schedules',
     name: 'schedules',
     component: () => import('@/views/ScheduleView.vue'),
+  },
+  {
+    meta: {
+      title: '连接',
+    },
+    path: '/connection',
+    name: 'connection',
+    component: () => import('@/views/ConnectionView.vue'),
+  },
+  {
+    meta: {
+      title: '插件',
+    },
+    path: '/plugins',
+    name: 'plugins',
+    component: () => import('@/views/PluginsView.vue'),
   },
   {
     meta: {

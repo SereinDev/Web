@@ -13,7 +13,7 @@ import { gitInfo } from '@/utils/constants';
         <a
           href="https://sereindev.github.io/"
           target="_blank"
-          class="text-blue-600"
+          class="text-sky-600"
           >Serein
         </a>
         <code :title="gitInfo.sha"> @ {{ gitInfo.shortSha }} </code>

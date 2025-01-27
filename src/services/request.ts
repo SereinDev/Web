@@ -8,6 +8,7 @@ import { Schedule } from '@/types/schedule';
 import { Configuration, Server, Servers } from '@/types/server';
 import axios, { AxiosError } from 'axios';
 import { createNotify } from './notification';
+import { ConnectionStatus } from '@/types/connection';
 
 const appJsonHeader = {
   'Content-Type': 'application/json',
@@ -147,4 +148,17 @@ export async function editSchedule(id: number, schedule: Schedule) {
 
 export async function removeSchedule(id: number) {
   await instance.delete<Packet<void>>('/schedules/' + id);
+}
+
+export async function getConnectionStatus() {
+  return (await instance.get<Packet<ConnectionStatus>>('/connection')).data
+    .data;
+}
+
+export async function openConnection() {
+  await instance.get<Packet<ConnectionStatus>>('/connection/open');
+}
+
+export async function closeConnection() {
+  await instance.get<Packet<ConnectionStatus>>('/connection/close');
 }

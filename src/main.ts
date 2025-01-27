@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/vue';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 import App from './App.vue';
@@ -16,4 +17,25 @@ if (
   darkModeStore.set(true);
 }
 
-createApp(App).use(router).use(pinia).mount('#app');
+const app = createApp(App);
+app.use(router);
+app.use(pinia);
+
+Sentry.init({
+  app,
+  dsn: 'https://be773cfe327c61636f0acb361e007f2c@o4507968791379968.ingest.us.sentry.io/4508641628651520',
+
+  integrations: [
+    Sentry.browserTracingIntegration({ router }),
+    Sentry.replayIntegration(),
+  ],
+
+  // @ts-expect-error
+  environment: import.meta.env.MODE,
+
+  tracesSampleRate: 1.0,
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0,
+});
+
+app.mount('#app');

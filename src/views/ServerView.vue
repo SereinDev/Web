@@ -159,7 +159,7 @@ onBeforeUnmount(connection.dispose);
       <SectionTitleLineWithButton :icon="mdiText" title="信息" no-button />
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-6">
         <CardBoxWidget
-          color="text-blue-500"
+          color="text-sky-500"
           :icon="mdiInformationBoxOutline"
           :value="server?.status ? '运行中' : '未启动'"
           label="状态"
@@ -191,7 +191,7 @@ onBeforeUnmount(connection.dispose);
 
       <SectionTitleLineWithButton :icon="mdiConsole" title="控制台" no-button />
       <CardBox has-component-layout class="overflow-hidden mb-5">
-        <Console :datas="connection.output.value" />
+        <Console :datas="connection.output.value" enable-ansi />
       </CardBox>
 
       <div class="flex w-full">
