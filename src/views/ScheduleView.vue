@@ -9,23 +9,24 @@ import FormField from '@/components/FormField.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
-import { createNotify } from '@/services/notification';
 import {
   addSchedule,
   editSchedule,
   getSchedules,
   removeSchedule,
-} from '@/services/request';
+} from '@/services/apis/schedule';
 import { Schedule } from '@/types/schedule';
 import {
   mdiClockOutline,
   mdiPencil,
   mdiPlus,
   mdiRefresh,
-  mdiTrashCan
+  mdiTrashCan,
 } from '@mdi/js';
 import { computed, reactive, ref } from 'vue';
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
 const current = ref({} as Schedule);
 const isModalActive = ref(false);
 const isModalDangerActive = ref(false);
@@ -55,11 +56,7 @@ async function update() {
     items.value = await getSchedules();
   } catch (error) {
     items.value = [];
-    createNotify({
-      type: 'danger',
-      title: '获取定时任务失败',
-      message: String(error),
-    });
+    toast.error('获取定时任务失败，原因：' + String(error));
   }
 }
 
@@ -68,28 +65,20 @@ async function confirm() {
     try {
       await addSchedule(current.value);
 
-      createNotify({ title: '新建成功', type: 'success' });
+      toast.success('新建成功');
     } catch (error) {
       isModalActive.value = true;
-      createNotify({
-        type: 'danger',
-        title: '新建定时任务失败',
-        message: String(error),
-      });
+      toast.error('新建定时任务失败，原因：' + String(error));
     }
   } else {
     try {
       const id = current.value.id;
       current.value.id = undefined;
       await editSchedule(id, current.value);
-      createNotify({ title: '修改成功', type: 'success' });
+      toast.success('修改成功');
     } catch (error) {
       isModalActive.value = true;
-      createNotify({
-        type: 'danger',
-        title: '修改定时任务失败',
-        message: String(error),
-      });
+      toast.error('修改定时任务失败，原因：' + String(error));
     }
   }
 
@@ -103,13 +92,9 @@ async function remove() {
     }
 
     await removeSchedule(current.value.id);
-    createNotify({ title: '删除成功', type: 'success' });
+    toast.success('删除成功');
   } catch (error) {
-    createNotify({
-      type: 'danger',
-      title: '删除失败',
-      message: String(error),
-    });
+    toast.error('删除定时任务失败，原因：' + String(error));
   }
 
   await update();
@@ -136,44 +121,39 @@ update();
       @confirm="confirm"
     >
       <FormCheckRadio
+        v-model="current.isEnabled"
         type="checkbox"
         name="requireAdmin"
         :input-value="false"
-        v-model="current.isEnabled"
         label="启用"
       />
 
       <FormField label="Cron表达式" style="margin-bottom: 0">
         <FormControl
+          v-model="current.expression"
           type="text"
           autocomplete="none"
-          v-model="current.expression"
         />
       </FormField>
 
       <FormField label="命令">
         <FormControl
+          v-model="current.command"
           type="text"
           autocomplete="none"
-          v-model="current.command"
         />
       </FormField>
 
       <FormField label="描述">
         <FormControl
+          v-model="current.description"
           type="text"
           autocomplete="none"
-          v-model="current.description"
         />
       </FormField>
-
     </CardBoxModal>
     <SectionMain>
-      <SectionTitleLineWithButton
-        :icon="mdiClockOutline"
-        title="定时任务"
-        main
-      >
+      <SectionTitleLineWithButton :icon="mdiClockOutline" title="定时任务" main>
         <BaseButtons>
           <BaseButton
             :icon="mdiPlus"

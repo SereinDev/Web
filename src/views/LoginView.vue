@@ -8,13 +8,13 @@ import FormField from '@/components/FormField.vue';
 import NotificationBar from '@/components/NotificationBar.vue';
 import SectionFullScreen from '@/components/SectionFullScreen.vue';
 import LayoutGuest from '@/layouts/LayoutGuest.vue';
-import { createNotify } from '@/services/notification';
-import { getRoot } from '@/services/request';
+import { getRoot } from '@/services/apis';
 import { useMainStore } from '@/stores/main';
 import { name } from '@/utils/constants';
 import { mdiAlert, mdiFormTextboxPassword } from '@mdi/js';
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useToast } from 'vue-toastification';
 
 const checked = ref(false);
 const mainStore = useMainStore();
@@ -23,14 +23,13 @@ const form = reactive({
   remember: mainStore.remember,
 });
 
+const toast = useToast();
 const router = useRouter();
 
 async function submit() {
-  if (!(await check())) {
-    createNotify({
-      type: 'danger',
-      title: '登录凭证无效',
-    });
+  const result = await check();
+  if (!result) {
+    toast.error('登录凭证无效');
   }
 }
 
@@ -39,7 +38,7 @@ async function check(): Promise<boolean> {
     const response = await getRoot();
 
     if (response.status === 200) {
-      router.push('/overview');
+      router.push({ name: 'overview' });
     }
 
     return true;
@@ -98,8 +97,8 @@ if (!checked.value) {
         />
 
         <NotificationBar
-          class="mt-3"
           v-if="form.remember"
+          class="mt-3"
           :icon="mdiAlert"
           color="warning"
         >

@@ -1,5 +1,5 @@
+import { repoUrl } from '@/utils/constants';
 import { mdiGithub, mdiLogout, mdiThemeLightDark } from '@mdi/js';
-import { repoUrl } from './utils/constants';
 
 export default [
   {

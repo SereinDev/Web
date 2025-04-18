@@ -1,10 +1,13 @@
+import App from '@/App.vue';
+import router from '@/router';
+import { darkModeKey, useDarkModeStore } from '@/stores/darkMode';
 import * as Sentry from '@sentry/vue';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
-import App from './App.vue';
-import './css/main.css';
-import router from './router';
-import { darkModeKey, useDarkModeStore } from './stores/darkMode';
+import Toast from 'vue-toastification';
+
+import '@/css/main.css';
+import 'vue-toastification/dist/index.css';
 
 const pinia = createPinia();
 const darkModeStore = useDarkModeStore(pinia);
@@ -20,6 +23,7 @@ if (
 const app = createApp(App);
 app.use(router);
 app.use(pinia);
+app.use(Toast);
 
 Sentry.init({
   app,

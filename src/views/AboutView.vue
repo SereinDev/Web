@@ -6,10 +6,14 @@ import SectionBannerStarOnGitHub from '@/components/SectionBannerStarOnGitHub.vu
 import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
-import { getMetadata } from '@/services/request';
+import { getMetadata } from '@/services/apis';
 import { Metadata } from '@/types/metadata';
 import { discussionUrl, docsUrl, gitInfo } from '@/utils/constants';
-import { mdiBookOpenOutline, mdiChatOutline, mdiInformationOutline } from '@mdi/js';
+import {
+  mdiBookOpenOutline,
+  mdiChatOutline,
+  mdiInformationOutline,
+} from '@mdi/js';
 import { ref } from 'vue';
 
 const metadata = ref<Metadata>();
@@ -37,7 +41,7 @@ getMetadata().then((res) => (metadata.value = res));
         </div>
         <div class="p-2">
           <div class="font-bold">后端版本</div>
-          <code class="select-all break-all" v-if="metadata">
+          <code v-if="metadata" class="select-all break-all">
             Serein.{{ metadata?.type }}@{{ metadata?.fullVersion }}
           </code>
           <code v-else> ... </code>

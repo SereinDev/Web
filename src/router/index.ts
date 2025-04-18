@@ -1,6 +1,10 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
-import Home from '@/views/HomeView.vue';
 import { name } from '@/utils/constants';
+import Home from '@/views/HomeView.vue';
+import {
+  createRouter,
+  createWebHashHistory,
+  type RouteRecordRaw,
+} from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -36,7 +40,7 @@ const routes: RouteRecordRaw[] = [
       title: '编辑配置',
     },
     path: '/servers/:id/configuration',
-    name: 'congiguration',
+    name: 'configuration',
     component: () => import('@/views/ConfigurationView.vue'),
   },
   {

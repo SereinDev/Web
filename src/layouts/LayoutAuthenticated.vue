@@ -33,7 +33,7 @@ const menuClick = (event, item) => {
 
   if (item.isLogout) {
     mainStore.accessToken = '';
-    router.push('/login');
+    router.push({ name: 'login' });
   }
 };
 </script>

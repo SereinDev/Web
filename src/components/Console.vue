@@ -7,7 +7,7 @@ const props = defineProps({
   datas: {
     type: Array,
     require: true,
-    default: [],
+    default: () => [],
   },
   enableAnsi: Boolean,
 });
@@ -27,8 +27,9 @@ onMounted(scrollToBottom);
 <template>
   <div id="console" ref="consoleRef" class="py-1 overflow-y-scroll">
     <div
+      v-for="(line, index) of datas"
+      :key="index"
       class="whitespace-pre-wrap break-all hover:bg-[#8881] px-3 transition-colors"
-      v-for="line of datas"
     >
       <span v-if="enableAnsi" v-html="ansiUp.ansi_to_html(line as string)">
       </span>

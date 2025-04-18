@@ -10,7 +10,6 @@ import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import router from '@/router';
-import { createNotify } from '@/services/notification';
 import { getFileName, getServersWithCache } from '@/services/serverManager';
 import { Server } from '@/types/server';
 import {
@@ -22,19 +21,17 @@ import {
 } from '@mdi/js';
 import { Ref, ref } from 'vue';
 import { RouterLink } from 'vue-router';
+import { useToast } from 'vue-toastification';
 
 const servers: Ref<[string, Server][]> = ref([]);
+const toast = useToast();
 
 async function update(refresh: boolean = false) {
   try {
     servers.value = Object.entries(await getServersWithCache(refresh));
   } catch (error) {
     servers.value = [];
-    createNotify({
-      type: 'danger',
-      title: '获取服务器失败',
-      message: String(error),
-    });
+    toast.error('获取服务器失败，原因：' + String(error));
   }
 }
 
@@ -50,7 +47,10 @@ update();
             :icon="mdiPlus"
             color="whiteDark"
             title="添加"
-            @click="() => router.push('/servers/:new/configuration')"
+            @click="
+              () =>
+                router.push({ name: 'configuration', params: { id: ':new' } })
+            "
           />
           <BaseButton
             :icon="mdiRefresh"
@@ -62,13 +62,13 @@ update();
       </SectionTitleLineWithButton>
       <div class="min-h-80">
         <div
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"
           v-if="servers.length > 0"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"
         >
           <RouterLink
-            :to="`/servers/${server[0]}`"
             v-for="server in servers"
             :key="server[0]"
+            :to="{ name: 'server', params: { id: server[0] } }"
             class="m-3"
           >
             <CardBox

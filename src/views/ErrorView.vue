@@ -21,7 +21,7 @@ const props = defineProps(['message']);
 
         <template #footer>
           <BaseButtons>
-            <BaseButton label="返回" @click="router.back" color="info" />
+            <BaseButton label="返回" color="info" @click="router.back" />
           </BaseButtons>
         </template>
       </CardBox>

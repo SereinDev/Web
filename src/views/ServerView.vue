@@ -11,13 +11,12 @@ import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import router from '@/router';
-import { createNotify } from '@/services/notification';
 import {
   inputServer,
   startServer,
   stopServer,
   terminateServer,
-} from '@/services/request';
+} from '@/services/apis/server';
 import { getServerConnection } from '@/services/serverConnection';
 import { getServersWithCache } from '@/services/serverManager';
 import { Server } from '@/types/server';
@@ -39,7 +38,9 @@ import {
 } from '@mdi/js';
 import numeral from 'numeral';
 import { computed, onBeforeUnmount, Ref, ref } from 'vue';
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
 const id = computed(() => router.currentRoute.value.params['id'] as string);
 const server: Ref<Server> = ref();
 const online = ref(true);
@@ -54,12 +55,7 @@ async function update(refresh: boolean = false) {
     server.value = (await getServersWithCache(refresh))[id.value];
   } catch (error) {
     if (online.value) {
-      createNotify({
-        type: 'danger',
-        title: `获取服务器（Id=${id.value}）失败`,
-        message: String(error),
-        duration: 0,
-      });
+      toast.error('获取服务器失败，原因：' + String(error));
     }
 
     online.value = false;
@@ -90,17 +86,10 @@ async function operate(type: string) {
         break;
     }
     if (['start', 'terminate'].includes(type)) {
-      createNotify({
-        type: 'success',
-        title: '操作成功',
-      });
+      toast.success('操作成功');
     }
   } catch (error) {
-    createNotify({
-      type: 'warning',
-      title: '操作失败',
-      message: String(error),
-    });
+    toast.error('操作失败，原因：' + String(error));
   }
 }
 
@@ -134,7 +123,9 @@ onBeforeUnmount(connection.dispose);
             :icon="mdiFileEditOutline"
             color="whiteDark"
             title="编辑"
-            @click="() => router.push(`/servers/${id}/configuration`)"
+            @click="
+              () => router.push({ name: 'configuration', params: { id } })
+            "
           />
           <BaseButton
             :icon="mdiRefresh"
@@ -196,9 +187,9 @@ onBeforeUnmount(connection.dispose);
 
       <div class="flex w-full">
         <FormControl
-          class="w-full mr-4"
-          v-model="input"
           ref="inputRef"
+          v-model="input"
+          class="w-full mr-4"
           inputmode="text"
           autocomplete="none"
           placeholder="在此输入命令..."

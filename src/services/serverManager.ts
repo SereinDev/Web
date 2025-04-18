@@ -1,5 +1,5 @@
-import { Server, Servers } from '@/types/server';
-import { getServers } from './request';
+import { getServers } from '@/services/apis/server';
+import type { Server, Servers } from '@/types/server';
 
 let cache: Servers = {};
 let lastUpdate: number = 0;

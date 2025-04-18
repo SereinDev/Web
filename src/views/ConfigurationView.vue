@@ -11,12 +11,11 @@ import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import router from '@/router';
-import { createNotify } from '@/services/notification';
 import {
   addServer,
   removeServer,
-  updateServerConfiguration,
-} from '@/services/request';
+  updateConfiguration,
+} from '@/services/apis/server';
 import { getServersWithCache } from '@/services/serverManager';
 import { Configuration } from '@/types/server';
 import {
@@ -38,7 +37,9 @@ import {
   mdiText,
 } from '@mdi/js';
 import { computed, reactive, ref } from 'vue';
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
 const encodings = [
   { id: 0, label: 'UTF-8' },
   { id: 1, label: 'UTF16-LE' },
@@ -100,40 +101,32 @@ if (readonly) {
 async function confirm() {
   if (readonly) {
     try {
-      await updateServerConfiguration(id.value, configuration.value);
-      createNotify({
-        type: 'success',
-        title: '更新配置成功',
+      await updateConfiguration(id.value, configuration.value);
+
+      toast.success('更新配置成功');
+      router.push({
+        name: 'server',
+        params: { id: id.value },
       });
-      router.push('/servers/' + id.value);
     } catch (error) {
-      createNotify({
-        type: 'danger',
-        title: '更新配置失败',
-        message: String(error),
-      });
+      toast.error('更新配置失败，原因：' + String(error));
     }
   } else {
     if (!id.value) {
-      createNotify({
-        type: 'danger',
-        title: 'Id不能为空',
-      });
+      toast.warning('Id不能为空');
       return;
     }
+
     try {
       await addServer(id.value, configuration.value);
-      createNotify({
-        type: 'success',
-        title: '创建服务器成功',
+
+      toast.success('创建服务器成功');
+      router.push({
+        name: 'server',
+        params: { id: id.value },
       });
-      router.push('/servers/' + id.value);
     } catch (error) {
-      createNotify({
-        type: 'danger',
-        title: '创建服务器失败',
-        message: String(error),
-      });
+      toast.error('创建服务器失败，原因：' + String(error));
     }
   }
 }
@@ -141,17 +134,13 @@ async function confirm() {
 async function remove() {
   try {
     await removeServer(id.value);
-    createNotify({
-      type: 'success',
-      title: '删除服务器成功',
+
+    toast.success('删除服务器成功');
+    router.push({
+      name: 'servers',
     });
-    router.push('/servers');
   } catch (error) {
-    createNotify({
-      type: 'danger',
-      title: '删除服务器失败',
-      message: String(error),
-    });
+    toast.error('删除服务器失败，原因：' + String(error));
   }
 }
 </script>
@@ -186,8 +175,8 @@ async function remove() {
         <BaseButton
           :icon="mdiFileDocumentCheckOutline"
           color="lightDark"
-          @click="confirm"
           :label="readonly ? '保存' : '创建'"
+          @click="confirm"
         />
         <BaseButton
           v-if="readonly"
@@ -207,19 +196,19 @@ async function remove() {
         <div class="grid grid-cols-1 md:grid-cols-2 md:gap-10">
           <FormField label="Id" help="用于区分服务器（一经填写无法修改）">
             <FormControl
+              v-model="id"
               :icon="mdiRename"
               name="id"
               type="text"
-              v-model="id"
               :disabled="readonly"
             />
           </FormField>
 
           <FormField label="名称" help="用于标识服务器，便于管理">
             <FormControl
+              v-model="configuration.name"
               :icon="mdiText"
               type="text"
-              v-model="configuration.name"
             />
           </FormField>
 
@@ -228,16 +217,16 @@ async function remove() {
             help="启动进程的文件，通常为可执行文件或批处理文件"
           >
             <FormControl
-              :icon="mdiFileOutline"
               v-model="configuration.fileName"
+              :icon="mdiFileOutline"
               type="text"
             />
           </FormField>
 
           <FormField label="启动参数" help="附加在启动文件后的参数">
             <FormControl
-              :icon="mdiConsoleLine"
               v-model="configuration.argument"
+              :icon="mdiConsoleLine"
               type="text"
             />
           </FormField>
@@ -254,8 +243,8 @@ async function remove() {
           <div>
             <FormField label="输入编码" help="输入到服务器的编码">
               <FormControl
-                :options="encodings"
                 v-model="configuration.inputEncoding"
+                :options="encodings"
                 :icon="mdiPencil"
               />
             </FormField>
@@ -265,17 +254,17 @@ async function remove() {
               help="读取服务器输出的编码（修改后需要重新启动服务器方可生效）"
             >
               <FormControl
+                v-model="configuration.outputEncoding"
                 :icon="mdiBookOpen"
                 :options="encodings"
-                v-model="configuration.outputEncoding"
               />
             </FormField>
 
             <FormField label="输出样式" help="控制台中渲染输出内容的样式">
               <FormControl
+                v-model="configuration.outputStyle"
                 :options="styles"
                 :icon="mdiPalette"
-                v-model="configuration.outputStyle"
               />
             </FormField>
           </div>
@@ -285,31 +274,31 @@ async function remove() {
               help="将控制台内容保存到文件“Serein/logs/servers/{id}-{datetime}.log”"
             >
               <FormCheckRadio
+                v-model="configuration.saveLog"
                 type="checkbox"
                 name="saveLog"
                 :input-value="false"
                 label="保存日志"
-                v-model="configuration.saveLog"
               />
             </FormField>
             <FormField help="在控制台显示由用户输入的命令">
               <FormCheckRadio
+                v-model="configuration.outputCommandUserInput"
                 type="checkbox"
                 name="outputCommandUserInput"
                 :input-value="false"
                 label="显示输出的命令"
-                v-model="configuration.outputCommandUserInput"
               />
             </FormField>
             <FormField
               :help="`使用Unicode字符输入（如'§'→'\\u00a7'），通常用于解决基岩版服务器输入Tellraw的编码问题`"
             >
               <FormCheckRadio
+                v-model="configuration.useUnicodeChars"
                 type="checkbox"
                 name="useUnicodeChars"
                 :input-value="false"
                 label="使用Unicode字符"
-                v-model="configuration.useUnicodeChars"
               />
             </FormField>
 
@@ -317,21 +306,21 @@ async function remove() {
 
             <FormField help="用于解决一些控制台无输入或输出的问题">
               <FormCheckRadio
+                v-model="configuration.pty.isEnabled"
                 type="checkbox"
                 name="pty_isEnabled"
                 :input-value="false"
                 label="使用虚拟终端输入和输出"
-                v-model="configuration.pty.isEnabled"
               />
             </FormField>
 
             <FormField help="不推荐修改此项，除非你知道你在做什么！">
               <FormCheckRadio
+                v-model="configuration.pty.forceWinPty"
                 type="checkbox"
                 name="pty_forceWinPty"
                 :input-value="false"
                 label="强制使用WinPty"
-                v-model="configuration.pty.forceWinPty"
                 :disabled="!configuration.pty.isEnabled"
               />
             </FormField>
@@ -340,8 +329,8 @@ async function remove() {
 
         <FormField label="行终止符" help="用于标记每行的结尾" class="mt-3">
           <FormControl
-            :icon="mdiContainEnd"
             v-model="lineTerminator"
+            :icon="mdiContainEnd"
             type="text"
           />
         </FormField>
@@ -359,8 +348,8 @@ async function remove() {
             help="服务器的IPv4端口，用于获取服务器相关信息（版本、在线玩家数）"
           >
             <FormControl
-              :icon="mdiMinecraft"
               v-model="configuration.portIPv4"
+              :icon="mdiMinecraft"
               inputmode="demical"
               type="number"
             />
@@ -369,37 +358,37 @@ async function remove() {
           <div>
             <FormField>
               <FormCheckRadio
+                v-model="configuration.autoRestart"
                 type="checkbox"
                 name="autoRestart"
                 :input-value="false"
                 label="当退出代码不为零时自动重启"
-                v-model="configuration.autoRestart"
               />
             </FormField>
             <FormField>
               <FormCheckRadio
+                v-model="configuration.autoStopWhenCrashing"
                 type="checkbox"
                 name="autoStopWhenCrashing"
                 :input-value="false"
                 label="应用程序崩溃时自动停止服务器"
-                v-model="configuration.autoStopWhenCrashing"
               />
             </FormField>
             <FormField>
               <FormCheckRadio
+                v-model="configuration.startWhenSettingUp"
                 type="checkbox"
                 name="startWhenSettingUp"
                 :input-value="false"
                 label="应用程序启动后自动运行"
-                v-model="configuration.startWhenSettingUp"
               />
             </FormField>
           </div>
         </div>
         <FormField label="关服命令" help="关闭服务器时输入的命令（一行一个）">
           <FormControl
-            :icon="mdiStopCircleOutline"
             v-model="stopCommands"
+            :icon="mdiStopCircleOutline"
             type="textarea"
             placeholder="一行一个"
           />

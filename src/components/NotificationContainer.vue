@@ -11,8 +11,8 @@ import { notificationMap } from '@/services/notification';
     <TransitionGroup name="notify">
       <NotificationBar
         v-for="kv in notificationMap?.entries() || []"
-        :color="kv[1].type"
         :key="kv[0]"
+        :color="kv[1].type"
         :icon="kv[1].icon"
         class="pointer-events-auto mt-3 mb-0 mb:w-30 whitespace-pre-line"
         @dismiss="() => notificationMap.delete(kv[0])"

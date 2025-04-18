@@ -1,20 +1,26 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
+
 defineProps({
   zIndex: {
     type: String,
-    default: 'z-50'
+    default: 'z-50',
   },
   type: {
     type: String,
-    default: 'flex'
-  }
-})
+    default: 'flex',
+  },
+});
 
-const emit = defineEmits(['overlay-click'])
+const emit = defineEmits(['overlay-click']);
 
 const overlayClick = (event) => {
-  emit('overlay-click', event)
-}
+  emit('overlay-click', event);
+};
+const visible = ref(false);
+onMounted(() => {
+  visible.value = true;
+});
 </script>
 
 <template>
@@ -31,6 +37,7 @@ const overlayClick = (event) => {
       leave-to-class="opacity-0"
     >
       <div
+        v-if="visible"
         class="overlay absolute inset-0 bg-gradient-to-tr opacity-90 dark:from-gray-700 dark:via-gray-900 dark:to-gray-700"
         @click="overlayClick"
       />

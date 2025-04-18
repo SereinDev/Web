@@ -3,15 +3,7 @@ import AsideMenuItem from '@/components/AsideMenuItem.vue';
 import AsideMenuList from '@/components/AsideMenuList.vue';
 import BaseIcon from '@/components/BaseIcon.vue';
 import { name } from '@/utils/constants';
-import {
-  mdiClose,
-  mdiCogs,
-  mdiInformation,
-  mdiInformationBoxOutline,
-  mdiInformationOutline,
-  mdiInformationSlabCircle,
-  mdiInformationVariantCircle,
-} from '@mdi/js';
+import { mdiClose, mdiInformationOutline } from '@mdi/js';
 import { computed } from 'vue';
 
 defineProps({
@@ -26,7 +18,7 @@ const emit = defineEmits(['menu-click', 'aside-lg-close-click']);
 const bottomItem = computed(() => ({
   label: '关于',
   icon: mdiInformationOutline,
-  to: '/about',
+  to: 'about',
 }));
 
 const menuClick = (event, item) => {
@@ -51,7 +43,7 @@ const asideLgCloseClick = (event) => {
       >
         <div
           class="flex-1 xl:pl-0 flex justify-center items-center cursor-pointer"
-          @click="$router.push('/overview')"
+          @click="$router.push({ name: 'overview' })"
         >
           <img
             src="/favicon.png"

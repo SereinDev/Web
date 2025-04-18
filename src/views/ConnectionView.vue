@@ -8,19 +8,17 @@ import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import { connectWs, packets } from '@/services/connectionManager';
-import { createNotify } from '@/services/notification';
 import {
   closeConnection,
   getConnectionStatus,
   openConnection,
-} from '@/services/request';
+} from '@/services/apis/connection';
 import { ConnectionStatus } from '@/types/connection';
 import {
   mdiConnection,
   mdiDownloadNetworkOutline,
   mdiInformationBoxOutline,
   mdiRefresh,
-  mdiSwitch,
   mdiTimelapse,
   mdiToggleSwitch,
   mdiToggleSwitchOff,
@@ -28,9 +26,11 @@ import {
 } from '@mdi/js';
 import numeral from 'numeral';
 import { onBeforeUnmount, ref } from 'vue';
+import { useToast } from 'vue-toastification';
 
 const status = ref<ConnectionStatus>({} as ConnectionStatus);
 const timer = setInterval(update, 2000);
+const toast = useToast();
 
 connectWs();
 
@@ -41,11 +41,7 @@ async function update() {
   try {
     status.value = await getConnectionStatus();
   } catch (error) {
-    createNotify({
-      type: 'warning',
-      title: '获取连接状态失败',
-      message: String(error),
-    });
+    toast.error('获取连接状态失败，原因：' + String(error));
   }
 }
 
@@ -58,11 +54,7 @@ async function toggle() {
     }
     status.value = await getConnectionStatus();
   } catch (error) {
-    createNotify({
-      type: 'warning',
-      title: '切换连接状态失败',
-      message: String(error),
-    });
+    toast.error('切换连接状态失败，原因：' + String(error));
   }
 }
 </script>

@@ -9,13 +9,12 @@ import FormField from '@/components/FormField.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
-import { createNotify } from '@/services/notification';
 import {
   addMatch,
+  editMatch,
   getMatches,
   removeMatch,
-  editMatch,
-} from '@/services/request';
+} from '@/services/apis/match';
 import { Match, MatchFieldType } from '@/types/match';
 import {
   mdiFormatListBulleted,
@@ -25,7 +24,9 @@ import {
   mdiTrashCan,
 } from '@mdi/js';
 import { computed, reactive, ref } from 'vue';
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
 const options = [
   { id: 0, label: '禁用' },
   { id: 1, label: '服务器输入' },
@@ -34,9 +35,12 @@ const options = [
   { id: 4, label: '私聊消息' },
   { id: 5, label: '自身消息' },
 ];
+
 const current = ref({} as Match);
+
 const isModalActive = ref(false);
 const isModalDangerActive = ref(false);
+
 const items = ref([] as Match[]);
 const perPage = ref(10);
 const currentPage = ref(0);
@@ -63,11 +67,7 @@ async function update() {
     items.value = await getMatches();
   } catch (error) {
     items.value = [];
-    createNotify({
-      type: 'danger',
-      title: '获取匹配失败',
-      message: String(error),
-    });
+    toast.error('获取匹配失败，原因：' + String(error));
   }
 }
 
@@ -75,29 +75,21 @@ async function confirm() {
   if (!current.value.id) {
     try {
       await addMatch(current.value);
-
-      createNotify({ title: '新建成功', type: 'success' });
+      toast.success('新建成功');
     } catch (error) {
       isModalActive.value = true;
-      createNotify({
-        type: 'danger',
-        title: '新建匹配失败',
-        message: String(error),
-      });
+      toast.error('新建匹配失败，原因：' + String(error));
     }
   } else {
     try {
       const id = current.value.id;
       current.value.id = undefined;
+
       await editMatch(id, current.value);
-      createNotify({ title: '修改成功', type: 'success' });
+      toast.success('修改成功');
     } catch (error) {
       isModalActive.value = true;
-      createNotify({
-        type: 'danger',
-        title: '修改匹配失败',
-        message: String(error),
-      });
+      toast.error('修改匹配失败，原因：' + String(error));
     }
   }
 
@@ -111,13 +103,9 @@ async function remove() {
     }
 
     await removeMatch(current.value.id);
-    createNotify({ title: '删除成功', type: 'success' });
+    toast.success('删除成功');
   } catch (error) {
-    createNotify({
-      type: 'danger',
-      title: '删除失败',
-      message: String(error),
-    });
+    toast.error('删除匹配失败，原因：' + String(error));
   }
 
   await update();
@@ -144,7 +132,7 @@ update();
       @confirm="confirm"
     >
       <FormField label="正则表达式" style="margin-bottom: 0">
-        <FormControl type="text" autocomplete="none" v-model="current.regExp" />
+        <FormControl v-model="current.regExp" type="text" autocomplete="none" />
       </FormField>
 
       <div class="flex justify-center">
@@ -154,15 +142,16 @@ update();
           style="margin-bottom: 0; min-width: 150px"
         >
           <FormControl
+            v-model="current.fieldType"
             type="text"
             autocomplete="none"
             :options="options"
-            v-model="current.fieldType"
           />
         </FormField>
 
         <div class="w-full ml-8 flex mt-6">
           <FormCheckRadio
+            v-model="current.requireAdmin"
             type="checkbox"
             name="requireAdmin"
             :disabled="
@@ -171,7 +160,6 @@ update();
               )
             "
             :input-value="false"
-            v-model="current.requireAdmin"
             label="需要管理员权限"
           />
         </div>
@@ -179,25 +167,25 @@ update();
 
       <FormField label="命令">
         <FormControl
+          v-model="current.command"
           type="text"
           autocomplete="none"
-          v-model="current.command"
         />
       </FormField>
 
       <FormField label="描述">
         <FormControl
+          v-model="current.description"
           type="text"
           autocomplete="none"
-          v-model="current.description"
         />
       </FormField>
 
       <FormField label="排除参数">
         <FormControl
+          v-model="current.exclusions"
           type="text"
           autocomplete="none"
-          v-model="current.exclusions"
         />
       </FormField>
     </CardBoxModal>

@@ -12,42 +12,42 @@ import {
 
 export default [
   {
-    to: '/overview',
+    to: 'overview',
     label: '总览',
     icon: mdiMonitorDashboard,
   },
   {
-    to: '/servers',
+    to: 'servers',
     label: '服务器',
     icon: mdiServerOutline,
   },
   {
-    to: '/matches',
+    to: 'matches',
     label: '匹配',
     icon: mdiFormatListBulleted,
   },
   {
-    to: '/schedules',
+    to: 'schedules',
     label: '定时任务',
     icon: mdiClockOutline,
   },
   {
-    to: '/connection',
+    to: 'connection',
     label: '连接',
     icon: mdiConnection,
   },
   {
-    to: '/plugins',
+    to: 'plugins',
     label: '插件',
     icon: mdiPuzzleOutline,
   },
   {
-    // to: '/permissions',
+    to: '/permissions',
     label: '权限组',
     icon: mdiKeyOutline,
   },
   {
-    // to: '/binds',
+    to: '/binds',
     label: '绑定',
     icon: mdiAccountLockOutline,
   },
@@ -56,23 +56,23 @@ export default [
     icon: mdiCogs,
     menu: [
       {
-        // to: '/settings/connection',
+        to: '/settings/connection',
         label: '连接',
       },
       {
-        // to: '/settings/reaction',
+        to: '/settings/reaction',
         label: '反应',
       },
       {
-        // to: '/settings/webapi',
+        to: '/settings/webapi',
         label: '网页服务器',
       },
       {
-        // to: '/settings/app',
+        to: '/settings/app',
         label: '应用',
       },
       {
-        // to: '/settings/web',
+        to: '/settings/web',
         label: '网页',
       },
     ],

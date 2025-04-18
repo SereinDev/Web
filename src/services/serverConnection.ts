@@ -3,11 +3,11 @@ import {
   startServer,
   stopServer,
   terminateServer,
-} from '@/services/request';
+} from '@/services/apis/server';
+import { getServersWithCache } from '@/services/serverManager';
 import { useMainStore } from '@/stores/main';
 import { Server } from '@/types/server';
 import { ref } from 'vue';
-import { getServersWithCache } from './serverManager';
 
 const map = new Map<string, ServerConnection>();
 
