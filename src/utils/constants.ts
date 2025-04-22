@@ -8,3 +8,6 @@ export const gitInfo = {
   shortSha: GIT_COMMITHASH.slice(0, 7),
   time: new Date(GIT_LASTCOMMITDATETIME),
 };
+
+// @ts-expect-error
+export const environment = import.meta.env.MODE;

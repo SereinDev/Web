@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { ServerLineType } from '@/types/server';
 import { AnsiUp } from 'ansi_up';
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { encode } from 'html-entities';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
 const props = defineProps({
   datas: {
@@ -9,12 +10,12 @@ const props = defineProps({
     require: true,
     default: () => [],
   },
-  enableAnsi: Boolean,
 });
 
 const scrollToBottom = () =>
   (consoleRef.value.scrollTop = consoleRef.value.scrollHeight ?? 0);
 
+const typed = computed(() => props.datas as { type: number; data: string }[]);
 const consoleRef = ref();
 const length = computed(() => props.datas.length);
 const ansiUp = new AnsiUp();
@@ -27,13 +28,35 @@ onMounted(scrollToBottom);
 <template>
   <div id="console" ref="consoleRef" class="py-1 overflow-y-scroll">
     <div
-      v-for="(line, index) of datas"
+      v-for="(line, index) of typed"
       :key="index"
       class="whitespace-pre-wrap break-all hover:bg-[#8881] px-3 transition-colors"
     >
-      <span v-if="enableAnsi" v-html="ansiUp.ansi_to_html(line as string)">
+      <span
+        v-if="line.type === ServerLineType.Output"
+        v-html="ansiUp.ansi_to_html(line.data)"
+      >
       </span>
-      <span v-else v-html="encode(line as string)"></span>
+      <span
+        v-else-if="line.type === ServerLineType.Input"
+        class="opacity-70"
+        title="输入"
+      >
+        >> {{ line.data }}
+      </span>
+      <span v-else-if="line.type === ServerLineType.Info">
+        <span class="text-sky-500"
+          >[<span class="hover:underline hover:font-bold">Serein</span>]</span
+        >
+        {{ line.data }}
+      </span>
+      <span v-else-if="line.type === ServerLineType.Error">
+        <span class="text-red-500"
+          >[<span class="hover:underline font-bold">Error</span>]</span
+        >
+        {{ line.data }}
+      </span>
+      <span v-else v-html="encode(line.data)"></span>
     </div>
   </div>
 </template>

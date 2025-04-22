@@ -17,8 +17,8 @@ import {
   stopServer,
   terminateServer,
 } from '@/services/apis/server';
-import { getServerConnection } from '@/services/serverConnection';
-import { getServersWithCache } from '@/services/serverManager';
+import { createServerEventPipe } from '@/services/servers/eventPipe';
+import { getServersWithCache } from '@/services/servers/manager';
 import { Server } from '@/types/server';
 import {
   mdiAlert,
@@ -37,18 +37,20 @@ import {
   mdiTimelapse,
 } from '@mdi/js';
 import numeral from 'numeral';
-import { computed, onBeforeUnmount, Ref, ref } from 'vue';
+import { computed, onBeforeUnmount, ref } from 'vue';
 import { useToast } from 'vue-toastification';
 
 const toast = useToast();
 const id = computed(() => router.currentRoute.value.params['id'] as string);
-const server: Ref<Server> = ref();
-const online = ref(true);
 const timer = setInterval(update, 1000);
+
+const server = ref<Server>();
+const online = ref(true);
+const eventPipe = createServerEventPipe(id.value, server);
+
 const input = ref('');
 const inputRef = ref<{ inputEl: HTMLElement }>();
 const isModalActive = ref(false);
-const connection = getServerConnection(id.value);
 
 async function update(refresh: boolean = false) {
   try {
@@ -64,7 +66,7 @@ async function update(refresh: boolean = false) {
   online.value = Boolean(server.value);
 }
 
-async function operate(type: string) {
+async function operate(type: 'start' | 'stop' | 'terminate' | 'input') {
   try {
     switch (type) {
       case 'start':
@@ -85,6 +87,7 @@ async function operate(type: string) {
         inputRef.value?.inputEl.focus();
         break;
     }
+
     if (['start', 'terminate'].includes(type)) {
       toast.success('操作成功');
     }
@@ -95,7 +98,7 @@ async function operate(type: string) {
 
 update();
 onBeforeUnmount(() => clearInterval(timer));
-onBeforeUnmount(connection.dispose);
+onBeforeUnmount(() => eventPipe?.stop());
 </script>
 
 <template>
@@ -114,7 +117,7 @@ onBeforeUnmount(connection.dispose);
       <SectionTitleLineWithButton
         :icon="mdiServerNetworkOutline"
         :title="
-          server?.configuration.name ? server.configuration.name : '服务器'
+          server?.configuration.name ? server?.configuration.name : '服务器'
         "
         main
       >
@@ -160,7 +163,7 @@ onBeforeUnmount(connection.dispose);
           :icon="mdiMinecraft"
           :value="
             server?.status && server?.info.stat
-              ? `${server.info.stat?.currentPlayers}/${server.info.stat?.maximumPlayers}`
+              ? `${server?.info.stat?.currentPlayers}/${server?.info.stat?.maximumPlayers}`
               : '-'
           "
           label="在线人数"
@@ -171,7 +174,7 @@ onBeforeUnmount(connection.dispose);
           :value="
             server?.status && server?.info.startTime
               ? numeral(
-                  (Date.now() - new Date(server.info.startTime).getTime()) /
+                  (Date.now() - new Date(server?.info.startTime).getTime()) /
                     1000,
                 ).format('00:00:00')
               : '-'
@@ -182,7 +185,7 @@ onBeforeUnmount(connection.dispose);
 
       <SectionTitleLineWithButton :icon="mdiConsole" title="控制台" no-button />
       <CardBox has-component-layout class="overflow-hidden mb-5">
-        <Console :datas="connection.output.value" enable-ansi />
+        <Console :datas="eventPipe.output.value" />
       </CardBox>
 
       <div class="flex w-full">

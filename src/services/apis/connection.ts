@@ -8,9 +8,9 @@ export async function getConnectionStatus() {
 }
 
 export async function openConnection() {
-  await client.get<Packet<ConnectionStatus>>('/connection/open');
+  await client.post<Packet<ConnectionStatus>>('/connection');
 }
 
 export async function closeConnection() {
-  await client.get<Packet<ConnectionStatus>>('/connection/close');
+  await client.delete<Packet<ConnectionStatus>>('/connection');
 }

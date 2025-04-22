@@ -16,7 +16,9 @@ import {
   removeMatch,
 } from '@/services/apis/match';
 import { Match, MatchFieldType } from '@/types/match';
+import { docsUrl } from '@/utils/constants';
 import {
+  mdiBookOpenOutline,
   mdiFormatListBulleted,
   mdiPencil,
   mdiPlus,
@@ -37,6 +39,7 @@ const options = [
 ];
 
 const current = ref({} as Match);
+const isLoading = ref(false);
 
 const isModalActive = ref(false);
 const isModalDangerActive = ref(false);
@@ -64,21 +67,22 @@ const pagesList = computed(() => {
 
 async function update() {
   try {
+    isLoading.value = true;
     items.value = await getMatches();
   } catch (error) {
-    items.value = [];
     toast.error('获取匹配失败，原因：' + String(error));
   }
+  isLoading.value = false;
 }
 
 async function confirm() {
   if (!current.value.id) {
     try {
       await addMatch(current.value);
-      toast.success('新建成功');
+      toast.success('添加成功');
     } catch (error) {
       isModalActive.value = true;
-      toast.error('新建匹配失败，原因：' + String(error));
+      toast.error('添加失败，原因：' + String(error));
     }
   } else {
     try {
@@ -89,7 +93,7 @@ async function confirm() {
       toast.success('修改成功');
     } catch (error) {
       isModalActive.value = true;
-      toast.error('修改匹配失败，原因：' + String(error));
+      toast.error('修改失败，原因：' + String(error));
     }
   }
 
@@ -105,7 +109,7 @@ async function remove() {
     await removeMatch(current.value.id);
     toast.success('删除成功');
   } catch (error) {
-    toast.error('删除匹配失败，原因：' + String(error));
+    toast.error('删除失败，原因：' + String(error));
   }
 
   await update();
@@ -211,6 +215,7 @@ update();
             :icon="mdiRefresh"
             color="whiteDark"
             title="刷新"
+            :disabled="isLoading"
             @click="update"
           />
         </BaseButtons>
@@ -297,9 +302,29 @@ update();
               @click="currentPage = page"
             />
           </BaseButtons>
-          <small>第{{ currentPageHuman }}页，共{{ numPages }}页</small>
+          <small
+            >共{{ items.length }}项，第{{ currentPageHuman }}页，共{{
+              numPages
+            }}页</small
+          >
         </BaseLevel>
       </div>
+      <BaseButtons class="mt-5">
+        <BaseButton
+          label="文档§匹配"
+          color="whitedark"
+          target="_blank"
+          :href="docsUrl + '/docs/guidance/match'"
+          :icon="mdiBookOpenOutline"
+        />
+        <BaseButton
+          label="文档§变量"
+          color="whitedark"
+          target="_blank"
+          :href="docsUrl + '/docs/guidance/variables'"
+          :icon="mdiBookOpenOutline"
+        />
+      </BaseButtons>
     </SectionMain>
   </LayoutAuthenticated>
 </template>

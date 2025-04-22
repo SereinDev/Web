@@ -9,7 +9,7 @@ export async function getCpuInfo(): Promise<CpuInfo> {
 
 export async function getMemoryStatus(): Promise<MemoryStatus> {
   const response = await client.get<Packet<MemoryStatus>>(
-    '/hardware/memoryStatus',
+    '/hardware/memory-status',
   );
   return response.data.data;
 }

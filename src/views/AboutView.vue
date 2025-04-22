@@ -51,15 +51,17 @@ getMetadata().then((res) => (metadata.value = res));
         <BaseButton
           label="文档"
           color="whitedark"
-          :href="docsUrl"
           target="_blank"
+          rounded-full
+          :href="docsUrl"
           :icon="mdiBookOpenOutline"
         />
         <BaseButton
           label="讨论区"
           color="whitedark"
-          :href="discussionUrl"
           target="_blank"
+          rounded-full
+          :href="discussionUrl"
           :icon="mdiChatOutline"
         />
       </BaseButtons>

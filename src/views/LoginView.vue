@@ -29,7 +29,7 @@ const router = useRouter();
 async function submit() {
   const result = await check();
   if (!result) {
-    toast.error('登录凭证无效');
+    toast.error('网络不佳或登录凭证无效');
   }
 }
 

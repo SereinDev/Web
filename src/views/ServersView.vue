@@ -10,7 +10,7 @@ import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import router from '@/router';
-import { getFileName, getServersWithCache } from '@/services/serverManager';
+import { getFileName, getServersWithCache } from '@/services/servers/manager';
 import { Server } from '@/types/server';
 import {
   mdiFileOutline,

@@ -1,6 +1,6 @@
 import client from '@/services/apis/client';
 import { Packet } from '@/types/packet';
-import { Configuration, Server, Servers } from '@/types/server';
+import { Configuration, Line, Server, Servers } from '@/types/server';
 
 export async function getServers() {
   const response = await client.get<Packet<Servers>>('/servers');
@@ -13,7 +13,8 @@ export async function getServer(id: string) {
 }
 
 export async function addServer(id: string, config: Configuration) {
-  await client.post<Packet<void>>(`/servers/${id}`, {
+  await client.post<Packet<void>>('/servers', {
+    id,
     configuration: config,
   });
 }
@@ -29,17 +30,21 @@ export async function removeServer(id: string) {
 }
 
 export async function startServer(id: string) {
-  await client.get<Packet<void>>(`/servers/${id}/start`);
+  await client.post<Packet<void>>(`/servers/${id}/start`);
 }
 
 export async function stopServer(id: string) {
-  await client.get<Packet<void>>(`/servers/${id}/stop`);
+  await client.post<Packet<void>>(`/servers/${id}/stop`);
 }
 
 export async function terminateServer(id: string) {
-  await client.get<Packet<void>>(`/servers/${id}/terminate`);
+  await client.post<Packet<void>>(`/servers/${id}/terminate`);
 }
 
 export async function inputServer(id: string, input: string) {
   await client.post<Packet<void>>(`/servers/${id}/input`, [input]);
+}
+export async function getServerHistory(id: string) {
+  const response = await client.get<Packet<Line[]>>(`/servers/${id}/history`);
+  return response.data.data;
 }

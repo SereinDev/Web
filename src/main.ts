@@ -1,10 +1,11 @@
 import App from '@/App.vue';
 import router from '@/router';
 import { darkModeKey, useDarkModeStore } from '@/stores/darkMode';
+import { environment } from '@/utils/constants';
 import * as Sentry from '@sentry/vue';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
-import Toast from 'vue-toastification';
+import Toast, { PluginOptions } from 'vue-toastification';
 
 import '@/css/main.css';
 import 'vue-toastification/dist/index.css';
@@ -23,7 +24,10 @@ if (
 const app = createApp(App);
 app.use(router);
 app.use(pinia);
-app.use(Toast);
+app.use(Toast, {
+  maxToasts: 5,
+  pauseOnFocusLoss: false,
+} satisfies PluginOptions);
 
 Sentry.init({
   app,
@@ -34,8 +38,7 @@ Sentry.init({
     Sentry.replayIntegration(),
   ],
 
-  // @ts-expect-error
-  environment: import.meta.env.MODE,
+  environment,
 
   tracesSampleRate: 1.0,
   replaysSessionSampleRate: 0.1,
