@@ -185,7 +185,7 @@ onBeforeUnmount(() => eventPipe?.stop());
 
       <SectionTitleLineWithButton :icon="mdiConsole" title="控制台" no-button />
       <CardBox has-component-layout class="overflow-hidden mb-5">
-        <Console :datas="eventPipe.output.value" />
+        <Console :datas="eventPipe.output.value" type="server" />
       </CardBox>
 
       <div class="flex w-full">

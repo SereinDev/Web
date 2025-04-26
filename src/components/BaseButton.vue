@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import { getButtonColor } from '@/colors.js';
 import BaseIcon from '@/components/BaseIcon.vue';
+import { mdiLoading } from '@mdi/js';
 
 const props = defineProps({
   label: {
@@ -46,6 +47,7 @@ const props = defineProps({
   active: Boolean,
   disabled: Boolean,
   roundedFull: Boolean,
+  loading: Boolean,
 });
 
 const is = computed(() => {
@@ -116,9 +118,15 @@ const componentClass = computed(() => {
     :type="computedType"
     :to="to"
     :target="target"
-    :disabled="disabled"
+    :disabled="disabled || loading"
   >
-    <BaseIcon v-if="icon" :path="icon" :size="iconSize" />
+    <BaseIcon
+      v-if="loading"
+      class="animate-spin"
+      :path="mdiLoading"
+      :size="iconSize"
+    />
+    <BaseIcon v-else-if="icon" :path="icon" :size="iconSize" />
     <span v-if="label" :class="labelClass">{{ label }}</span>
   </component>
 </template>

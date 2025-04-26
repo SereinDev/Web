@@ -45,6 +45,8 @@ export async function inputServer(id: string, input: string) {
   await client.post<Packet<void>>(`/servers/${id}/input`, [input]);
 }
 export async function getServerHistory(id: string) {
-  const response = await client.get<Packet<Line[]>>(`/servers/${id}/history`);
+  const response = await client.get<Packet<{ type: string; data?: string }[]>>(
+    `/servers/${id}/history`,
+  );
   return response.data.data;
 }

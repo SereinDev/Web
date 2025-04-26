@@ -67,12 +67,3 @@ export enum EncodingType {
 
   GBK = 3,
 }
-
-export type Line = { type: ServerLineType; data: string };
-
-export enum ServerLineType {
-  Output = 0,
-  Input = 1,
-  Info = 2,
-  Error = 3,
-}

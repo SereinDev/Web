@@ -42,7 +42,9 @@ getMetadata().then((res) => (metadata.value = res));
         <div class="p-2">
           <div class="font-bold">后端版本</div>
           <code v-if="metadata" class="select-all break-all">
-            Serein.{{ metadata?.type }}@{{ metadata?.fullVersion }}
+            Serein.{{ ['Cli', 'Plus', 'Lite'][metadata?.type] }}@{{
+              metadata?.fullVersion
+            }}
           </code>
           <code v-else> ... </code>
         </div>

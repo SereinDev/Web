@@ -1,5 +1,5 @@
 export type Metadata = {
   version: string;
   fullVersion: string;
-  type: 'Cli' | 'Lite' | 'Plus';
+  type: 0 | 1 | 2;
 };

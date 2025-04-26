@@ -4,7 +4,7 @@ import { ref } from 'vue';
 
 let ws: WebSocket | null = null;
 
-export const packets = ref<DataTranferredEvent[]>([]);
+export const events = ref<DataTranferredEvent[]>([]);
 
 export function connectWs() {
   if (ws?.readyState === WebSocket.OPEN) {
@@ -18,7 +18,7 @@ export function connectWs() {
   const token = useMainStore().accessToken;
 
   if (token) {
-    url += `&token=${token}`;
+    url += `?token=${encodeURIComponent(token)}`;
   }
 
   ws = new WebSocket(url);
@@ -27,10 +27,10 @@ export function connectWs() {
 }
 
 function handleMessage(ev: MessageEvent) {
-  packets.value.push(JSON.parse(ev.data));
+  events.value.push(JSON.parse(ev.data));
 
-  if (packets.value.length > 200) {
-    packets.value.shift();
+  if (events.value.length > 200) {
+    events.value.shift();
   }
 }
 

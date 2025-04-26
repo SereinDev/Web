@@ -56,23 +56,23 @@ export default [
     icon: mdiCogs,
     menu: [
       {
-        to: '/settings/connection',
+        to: 'settings.connection',
         label: '连接',
       },
       {
-        to: '/settings/reaction',
+        to: 'settings.reaction',
         label: '反应',
       },
       {
-        to: '/settings/webapi',
+        to: 'settings.webapi',
         label: '网页服务器',
       },
       {
-        to: '/settings/app',
+        to: 'settings.application',
         label: '应用',
       },
       {
-        to: '/settings/web',
+        to: 'settings.webconsole',
         label: '网页',
       },
     ],

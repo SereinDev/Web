@@ -163,29 +163,28 @@ async function remove() {
         main
         no-button
       >
+        <BaseButtons class="mt-5">
+          <BaseButton
+            :icon="mdiArrowLeft"
+            color="lightDark"
+            label="返回"
+            @click="router.back"
+          />
+          <BaseButton
+            :icon="mdiFileDocumentCheckOutline"
+            color="info"
+            :label="readonly ? '保存' : '创建'"
+            @click="confirm"
+          />
+          <BaseButton
+            v-if="readonly"
+            :icon="mdiDelete"
+            color="danger"
+            label="删除"
+            @click="isModalDangerActive = true"
+          />
+        </BaseButtons>
       </SectionTitleLineWithButton>
-
-      <BaseButtons>
-        <BaseButton
-          :icon="mdiArrowLeft"
-          color="lightDark"
-          label="返回"
-          @click="router.back"
-        />
-        <BaseButton
-          :icon="mdiFileDocumentCheckOutline"
-          color="lightDark"
-          :label="readonly ? '保存' : '创建'"
-          @click="confirm"
-        />
-        <BaseButton
-          v-if="readonly"
-          :icon="mdiDelete"
-          color="danger"
-          label="删除"
-          @click="isModalDangerActive = true"
-        />
-      </BaseButtons>
 
       <SectionTitleLineWithButton
         title="常规"

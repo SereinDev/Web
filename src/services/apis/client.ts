@@ -7,12 +7,9 @@ import { useToast } from 'vue-toastification';
 const toast = useToast();
 const client = axios.create({ baseURL: '/api' });
 
-client.defaults.headers.post =
-  client.defaults.headers.put =
-  client.defaults.headers.delete =
-    {
-      'Content-Type': 'application/json',
-    };
+client.defaults.headers.post = client.defaults.headers.put = {
+  'Content-Type': 'application/json',
+};
 
 client.interceptors.request.use((value) => {
   const mainStore = useMainStore();

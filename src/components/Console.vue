@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ServerLineType } from '@/types/server';
 import { AnsiUp } from 'ansi_up';
 import { encode } from 'html-entities';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
@@ -10,13 +9,17 @@ const props = defineProps({
     require: true,
     default: () => [],
   },
+  type: {
+    type: String,
+    default: '',
+  },
 });
 
 const scrollToBottom = () =>
   (consoleRef.value.scrollTop = consoleRef.value.scrollHeight ?? 0);
 
-const typed = computed(() => props.datas as { type: number; data: string }[]);
 const consoleRef = ref();
+const typed = computed(() => props.datas as { type: string; data: string }[]);
 const length = computed(() => props.datas.length);
 const ansiUp = new AnsiUp();
 ansiUp.use_classes = true;
@@ -33,29 +36,39 @@ onMounted(scrollToBottom);
       class="whitespace-pre-wrap break-all hover:bg-[#8881] px-3 transition-colors"
     >
       <span
-        v-if="line.type === ServerLineType.Output"
+        v-if="line.type === 'output' && type === 'server'"
         v-html="ansiUp.ansi_to_html(line.data)"
       >
       </span>
+
       <span
-        v-else-if="line.type === ServerLineType.Input"
+        v-else-if="line.type === 'input' && type === 'server'"
         class="opacity-70"
         title="输入"
       >
         >> {{ line.data }}
       </span>
-      <span v-else-if="line.type === ServerLineType.Info">
+
+      <span v-else-if="line.type === 'info'">
         <span class="text-sky-500"
           >[<span class="hover:underline hover:font-bold">Serein</span>]</span
         >
         {{ line.data }}
       </span>
-      <span v-else-if="line.type === ServerLineType.Error">
+
+      <span v-else-if="line.type === 'sent' || line.type === 'received'">
+        <span v-if="line.type === 'sent'" class="text-sky-500">[↑]</span>
+        <span v-else class="text-emerald-500">[↓]</span>
+        {{ line.data }}
+      </span>
+
+      <span v-else-if="line.type === 'error'">
         <span class="text-red-500"
           >[<span class="hover:underline font-bold">Error</span>]</span
         >
         {{ line.data }}
       </span>
+
       <span v-else v-html="encode(line.data)"></span>
     </div>
   </div>

@@ -85,6 +85,46 @@ const routes: RouteRecordRaw[] = [
   },
   {
     meta: {
+      title: '连接设置',
+    },
+    path: '/settings/connection',
+    name: 'settings.connection',
+    component: () => import('@/views/settings/ConnectionSettingView.vue'),
+  },
+  {
+    meta: {
+      title: '反应设置',
+    },
+    path: '/settings/reaction',
+    name: 'settings.reaction',
+    component: () => import('@/views/settings/ReactionSettingView.vue'),
+  },
+  {
+    meta: {
+      title: '网页服务器设置',
+    },
+    path: '/settings/webapi',
+    name: 'settings.webapi',
+    component: () => import('@/views/settings/WebApiSettingView.vue'),
+  },
+  {
+    meta: {
+      title: '应用设置',
+    },
+    path: '/settings/application',
+    name: 'settings.application',
+    component: () => import('@/views/settings/AppSettingView.vue'),
+  },
+  {
+    meta: {
+      title: '网页控制台设置',
+    },
+    path: '/settings/webconsole',
+    name: 'settings.webconsole',
+    component: () => import('@/views/settings/WebConsoleSettingView.vue'),
+  },
+  {
+    meta: {
       title: '登录',
     },
     path: '/login',

@@ -154,6 +154,7 @@ defineExpose({ inputEl, selectEl, textareaEl });
       v-else-if="computedType === 'textarea'"
       :id="id"
       v-model="computedValue"
+      class="min-h-24"
       :class="inputElClass"
       :disabled="disabled"
       :name="name"

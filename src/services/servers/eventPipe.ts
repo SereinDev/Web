@@ -1,12 +1,14 @@
+import router from '@/router';
 import { getServerHistory } from '@/services/apis/server';
 import { getServersWithCache } from '@/services/servers/manager';
 import { useMainStore } from '@/stores/main';
 import { Line, ServerLineType, type Server } from '@/types/server';
 import { environment } from '@/utils/constants';
 import { Ref, ref } from 'vue';
+import { useToast } from 'vue-toastification';
 
 class ServerEventPipe {
-  public readonly output: Ref<Line[]>;
+  public readonly output: Ref<{ type: string; data?: string }[]>;
 
   private readonly id: string;
   private server: Ref<Server>;
@@ -37,9 +39,7 @@ class ServerEventPipe {
     ws.addEventListener('open', async () => {
       const history = await getServerHistory(this.id);
       if (!this.server.value?.configuration.outputCommandUserInput) {
-        this.output.value = history.filter(
-          (line) => line.type !== ServerLineType.Input,
-        );
+        this.output.value = history.filter((line) => line.type !== 'input');
       }
 
       this.output.value = history;
@@ -104,33 +104,34 @@ class ServerEventPipe {
         break;
 
       case 'stopped':
+        if (
+          router.currentRoute.value.name === 'server' &&
+          router.currentRoute.value.params.id === this.id
+        ) {
+          useToast().info('服务器已停止');
+        }
         break;
 
       case 'removed':
-        this?.stop();
+        this.stop();
         break;
 
       case 'input':
         if (this.server.value?.configuration.outputCommandUserInput) {
-          this.output.value.push({ type: ServerLineType.Input, data });
-        }
-        break;
-
-      case 'output':
-        this.output.value.push({ type: ServerLineType.Output, data });
-
-        while (this.output.value.length > 300) {
-          this.output.value.shift();
+          this.output.value.push({ type, data });
         }
         break;
 
       case 'info':
-        this.output.value.push({ type: ServerLineType.Info, data });
-        break;
-
       case 'error':
-        this.output.value.push({ type: ServerLineType.Error, data });
+      case 'output':
+        this.output.value.push({ type, data });
+
         break;
+    }
+
+    while (this.output.value.length > 300) {
+      this.output.value.shift();
     }
   }
 

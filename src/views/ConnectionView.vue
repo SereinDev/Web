@@ -7,7 +7,7 @@ import Console from '@/components/Console.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
-import { connectWs, packets } from '@/services/connectionManager';
+import { connectWs, events } from '@/services/connectionEventPipe';
 import {
   closeConnection,
   getConnectionStatus,
@@ -110,14 +110,7 @@ async function toggle() {
         />
       </div>
       <CardBox has-component-layout class="overflow-hidden mb-5">
-        <Console
-          :datas="
-            packets.map(
-              (packet) =>
-                (packet.type === 'sent' ? '[↑] ' : '[↓] ') + packet.data,
-            )
-          "
-        />
+        <Console :datas="events" type="connection" />
       </CardBox>
     </SectionMain>
   </LayoutAuthenticated>
