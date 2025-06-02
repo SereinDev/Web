@@ -9,7 +9,7 @@ import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import { updateApplicationSetting } from '@/services/apis/settings';
-import { getSettingsWithCache } from '@/services/settingProvider';
+import { getSettingsWithCache } from '@/services/settings/appSettingProvider';
 import { Settings } from '@/types/settings';
 import {
   mdiAccountLockOutline,
@@ -58,6 +58,9 @@ async function save() {
   if (isLoading.value) {
     return;
   }
+
+  isLoading.value = true;
+
   try {
     await updateApplicationSetting(setting.value);
     toast.success('保存设置成功');

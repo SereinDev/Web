@@ -7,12 +7,12 @@ import Console from '@/components/Console.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
-import { connectWs, events } from '@/services/connectionEventPipe';
 import {
   closeConnection,
   getConnectionStatus,
   openConnection,
 } from '@/services/apis/connection';
+import { connectWs, events } from '@/services/connection/eventPipe';
 import { ConnectionStatus } from '@/types/connection';
 import {
   mdiConnection,

@@ -1,9 +1,9 @@
-export type CpuInfo = {
+export interface CpuInfo {
   name: string;
   percentProcessorTime: number;
-};
+}
 
-export type MemoryStatus = {
+export interface MemoryStatus {
   totalPhysical: number;
   availablePhysical: number;
   totalPageFile: number;
@@ -11,9 +11,9 @@ export type MemoryStatus = {
   totalVirtual: number;
   availableVirtual: number;
   availableExtendedVirtual: number;
-};
+}
 
-export type OSInfo = {
+export interface OSInfo {
   name: string;
   version: string;
-};
+}

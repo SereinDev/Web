@@ -2,7 +2,8 @@ import router from '@/router';
 import { getServerHistory } from '@/services/apis/server';
 import { getServersWithCache } from '@/services/servers/manager';
 import { useMainStore } from '@/stores/main';
-import { Line, ServerLineType, type Server } from '@/types/server';
+import { type Server } from '@/types/server';
+import localSettingManager from '@/services/settings/localSettingManager';
 import { environment } from '@/utils/constants';
 import { Ref, ref } from 'vue';
 import { useToast } from 'vue-toastification';
@@ -130,7 +131,9 @@ class ServerEventPipe {
         break;
     }
 
-    while (this.output.value.length > 300) {
+    while (
+      this.output.value.length > localSettingManager.value.value.maxLines.server
+    ) {
       this.output.value.shift();
     }
   }
@@ -141,7 +144,7 @@ class ServerEventPipe {
     }
 
     const packet = JSON.parse(ev.data);
-    this.handlePacket(packet);
+    void this.handlePacket(packet);
   }
 }
 

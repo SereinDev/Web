@@ -9,7 +9,7 @@ import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import { updateWebApiSetting } from '@/services/apis/settings';
-import { getSettingsWithCache } from '@/services/settingProvider';
+import { getSettingsWithCache } from '@/services/settings/appSettingProvider';
 import { Settings } from '@/types/settings';
 import {
   mdiCertificateOutline,
@@ -59,6 +59,9 @@ async function save() {
   if (isLoading.value) {
     return;
   }
+
+  isLoading.value = true;
+
   try {
     await updateWebApiSetting(setting.value);
     toast.success('保存设置成功');
@@ -82,6 +85,7 @@ async function save() {
           :icon="mdiFileDocumentCheckOutline"
           color="lightDark"
           label="保存"
+          :loading="isLoading"
           @click="save"
         />
       </SectionTitleLineWithButton>

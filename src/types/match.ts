@@ -1,4 +1,4 @@
-export type Match = {
+export interface Match {
   regExp: string;
   fieldType: MatchFieldType;
   requireAdmin: boolean;
@@ -6,7 +6,7 @@ export type Match = {
   description: string;
   command: string;
   id: number;
-};
+}
 
 export enum MatchFieldType {
   Disabled = 0,

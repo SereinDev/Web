@@ -1,5 +1,4 @@
 import { name } from '@/utils/constants';
-import Home from '@/views/HomeView.vue';
 import {
   createRouter,
   createWebHashHistory,
@@ -17,7 +16,7 @@ const routes: RouteRecordRaw[] = [
     },
     path: '/overview',
     name: 'overview',
-    component: Home,
+    component: () => import('@/views/HomeView.vue'),
   },
   {
     meta: {
@@ -119,9 +118,9 @@ const routes: RouteRecordRaw[] = [
     meta: {
       title: '网页控制台设置',
     },
-    path: '/settings/webconsole',
-    name: 'settings.webconsole',
-    component: () => import('@/views/settings/WebConsoleSettingView.vue'),
+    path: '/settings/local',
+    name: 'settings.local',
+    component: () => import('@/views/settings/LocalSettingView.vue'),
   },
   {
     meta: {
@@ -155,13 +154,13 @@ const routes: RouteRecordRaw[] = [
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
-  scrollBehavior(to, from, savedPosition) {
-    return savedPosition || { top: 0 };
+  scrollBehavior(_to, _from, savedPosition) {
+    return savedPosition ?? { top: 0 };
   },
 });
 
 router.afterEach((to) => {
-  document.title = to.meta?.title ? `${to.meta.title} · ${name}` : name;
+  document.title = to.meta.title ? `${to.meta.title} · ${name}` : name;
 });
 
 export default router;

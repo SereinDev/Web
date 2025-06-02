@@ -8,7 +8,7 @@ import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import { updateConnectionSetting } from '@/services/apis/settings';
-import { getSettingsWithCache } from '@/services/settingProvider';
+import { getSettingsWithCache } from '@/services/settings/appSettingProvider';
 import { Settings } from '@/types/settings';
 import {
   mdiDatabaseOutline,
@@ -63,6 +63,9 @@ async function save() {
   if (isLoading.value) {
     return;
   }
+
+  isLoading.value = true;
+
   try {
     await updateConnectionSetting(setting.value);
     toast.success('保存设置成功');
@@ -86,6 +89,7 @@ async function save() {
           :icon="mdiFileDocumentCheckOutline"
           color="lightDark"
           label="保存"
+          :loading="isLoading"
           @click="save"
         />
       </SectionTitleLineWithButton>
@@ -98,7 +102,8 @@ async function save() {
       <CardBox>
         <FormField
           label="地址"
-          :help="'· 正向WebSocket：连接的WebSocket地址\n· 反向WebSocket：WebSocket服务器的开启地址'"
+          :help="`· 正向WebSocket：连接的WebSocket地址，需以'ws://'或'wss://'开头
+          · 反向WebSocket：WebSocket服务器的开启地址，需以'http://'或'https://'开头`"
         >
           <FormControl
             v-model="setting.uri"
@@ -110,7 +115,8 @@ async function save() {
 
         <FormField
           label="鉴权凭证（Token）"
-          :help="'· 正向WebSocket：在Header携带Authentication字段\n· 反向WebSocket：校验连接的客户端Header中的Authentication字段'"
+          :help="`· 正向WebSocket：在Header携带Authentication字段
+          · 反向WebSocket：校验连接的客户端Header中的Authentication字段`"
         >
           <FormControl
             v-model="setting.accessToken"

@@ -46,30 +46,19 @@ export interface Settings {
   };
 
   readonly reactions: {
-    [key: number | ReactionType]: string[];
+    [key: string | ReactionType]: string[];
   };
 }
 
-export enum ReactionType {
-  ServerStart = 0,
-
-  ServerExitedNormally = 1,
-
-  ServerExitedUnexpectedly = 2,
-
-  GroupIncreased = 3,
-
-  GroupDecreased = 4,
-
-  GroupPoke = 5,
-
-  BindingSucceeded = 6,
-
-  UnbindingSucceeded = 7,
-
-  PermissionDeniedFromPrivateMsg = 8,
-
-  PermissionDeniedFromGroupMsg = 9,
-
-  SereinCrash = 10,
-}
+export type ReactionType =
+  | 'ServerStart'
+  | 'ServerExitedNormally'
+  | 'ServerExitedUnexpectedly'
+  | 'GroupIncreased'
+  | 'GroupDecreased'
+  | 'GroupPoke'
+  | 'BindingSucceeded'
+  | 'UnbindingSucceeded'
+  | 'PermissionDeniedFromPrivateMsg'
+  | 'PermissionDeniedFromGroupMsg'
+  | 'SereinCrash';

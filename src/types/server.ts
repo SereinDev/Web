@@ -1,6 +1,6 @@
 export type Servers = Record<string, Server>;
 
-export type Server = {
+export interface Server {
   id: string;
   status: boolean;
   pid: number | null;
@@ -8,9 +8,9 @@ export type Server = {
   commandHistory: string[];
   commandHistoryIndex: number;
   configuration: Configuration;
-};
+}
 
-export type ServerInfo = {
+export interface ServerInfo {
   fileName: string | null;
   argument: string | null;
   startTime: string | null;
@@ -23,9 +23,9 @@ export type ServerInfo = {
     currentPlayers: string;
     maximumPlayers: string;
   } | null;
-};
+}
 
-export type Configuration = {
+export interface Configuration {
   name: string;
   fileName: string;
   argument: string;
@@ -43,14 +43,14 @@ export type Configuration = {
   startWhenSettingUp: boolean;
   useUnicodeChars: boolean;
   pty: PtyOptions;
-};
+}
 
-declare type PtyOptions = {
+declare interface PtyOptions {
   isEnabled: boolean;
   terminalWidth: number | null;
   terminalHeight: number | null;
   forceWinPty: boolean;
-};
+}
 
 export enum OutputStyle {
   Plain = 0,

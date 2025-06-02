@@ -1,3 +1,4 @@
+import localSettingManager from '@/services/settings/localSettingManager';
 import { useMainStore } from '@/stores/main';
 import { DataTranferredEvent } from '@/types/connection';
 import { ref } from 'vue';
@@ -29,7 +30,9 @@ export function connectWs() {
 function handleMessage(ev: MessageEvent) {
   events.value.push(JSON.parse(ev.data));
 
-  if (events.value.length > 200) {
+  if (
+    events.value.length > localSettingManager.value.value.maxLines.connection
+  ) {
     events.value.shift();
   }
 }

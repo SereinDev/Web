@@ -72,7 +72,7 @@ export default [
         label: '应用',
       },
       {
-        to: 'settings.webconsole',
+        to: 'settings.local',
         label: '网页',
       },
     ],

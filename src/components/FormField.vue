@@ -18,9 +18,7 @@ const props = defineProps({
 });
 
 const slots = useSlots();
-const escaptedHelp = computed(() =>
-  encode(props.help)?.replace(/\n/g, '<br/>'),
-);
+const escapedHelp = computed(() => encode(props.help)?.replace(/\n/g, '<br/>'));
 
 const wrapperClass = computed(() => {
   const base = [];
@@ -51,7 +49,7 @@ const wrapperClass = computed(() => {
       <slot />
     </div>
     <div v-if="help" class="text-xs text-gray-500 dark:text-slate-400 mt-1">
-      <span v-html="escaptedHelp" />
+      <span v-html="escapedHelp" />
     </div>
   </div>
 </template>
