@@ -1,17 +1,29 @@
 export interface Settings {
   readonly connection: {
-    accessToken: string;
-    autoEscape: boolean;
-    autoReconnect: boolean;
+    adapter: number;
+    connectWhenSettingUp: boolean;
     saveLog: boolean;
-    outputData: true;
-    grantPermissionToOwnerAndAdmins: boolean;
-    groups: number[];
-    administrators: number[];
-    headers: { [key: string]: string };
-    uri: string;
-    useReverseWebSocket: boolean;
-    subProtocols: string[];
+    outputData: boolean;
+    listenedIds: string[];
+    administratorUserIds: string[];
+    self: {
+      platform: string;
+      userId: string;
+    };
+    oneBot: {
+      version: number;
+      accessToken: string;
+      autoEscape: boolean;
+      grantPermissionToGroupOwnerAndAdmins: boolean;
+      headers: { [key: string]: string };
+      uri: string;
+      subProtocols: string[];
+      autoReconnect: boolean;
+    };
+    satori: {
+      uri: string;
+      accessToken: string;
+    };
   };
 
   readonly webApi: {

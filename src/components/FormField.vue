@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { encode } from 'html-entities';
 import { computed, useSlots } from 'vue';
 
 const props = defineProps({
@@ -18,7 +17,6 @@ const props = defineProps({
 });
 
 const slots = useSlots();
-const escapedHelp = computed(() => encode(props.help)?.replace(/\n/g, '<br/>'));
 
 const wrapperClass = computed(() => {
   const base = [];
@@ -48,8 +46,11 @@ const wrapperClass = computed(() => {
     <div :class="wrapperClass">
       <slot />
     </div>
-    <div v-if="help" class="text-xs text-gray-500 dark:text-slate-400 mt-1">
-      <span v-html="escapedHelp" />
+    <div
+      v-if="help"
+      class="text-xs text-gray-500 dark:text-slate-400 mt-1 whitespace-pre-wrap"
+    >
+      {{ help }}
     </div>
   </div>
 </template>

@@ -1,10 +1,8 @@
 import {
-  mdiAccountLockOutline,
   mdiClockOutline,
   mdiCogs,
   mdiConnection,
   mdiFormatListBulleted,
-  mdiKeyOutline,
   mdiMonitorDashboard,
   mdiPuzzleOutline,
   mdiServerOutline,
@@ -41,16 +39,16 @@ export default [
     label: '插件',
     icon: mdiPuzzleOutline,
   },
-  {
-    to: '/permissions',
-    label: '权限组',
-    icon: mdiKeyOutline,
-  },
-  {
-    to: '/binds',
-    label: '绑定',
-    icon: mdiAccountLockOutline,
-  },
+  // {
+  //   to: '/permissions',
+  //   label: '权限组',
+  //   icon: mdiKeyOutline,
+  // },
+  // {
+  //   to: '/binds',
+  //   label: '绑定',
+  //   icon: mdiAccountLockOutline,
+  // },
   {
     label: '设置',
     icon: mdiCogs,

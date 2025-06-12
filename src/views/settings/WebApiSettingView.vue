@@ -114,7 +114,13 @@ async function save() {
       <CardBox>
         <FormField
           label="Url前缀"
-          :help="'Http服务器监听的Url（一行一个）\n示例：\n· http://127.0.0.1:{端口} 只能由本机访问\n· http://*:{端口} 允许外网访问，但需要手动以管理员权限运行Serein（操作系统限制）\n· https://{域名}/ 需要在下方配置证书'"
+          :help="`Http服务器监听的Url
+· 使用换行符分隔每一个值，即一行一个值
+· 使用HTTPS协议时，需要在下方设置证书
+· 示例
+  · 只允许内网访问：“http://127.0.0.1:12345”、“https://127.0.0.1:12345”、“http://[::1]:12345”
+  · 允许外网访问：“http://*:8080”（可能需要以管理员身份运行）
+  · 使用域名：“http://example.com”`"
         >
           <FormControl
             v-model="urlPrefixes"
@@ -144,7 +150,10 @@ async function save() {
             style="width: 150px"
           />
         </FormField>
-        <FormField label="IP请求白名单" help="不会被封禁的IP列表（一行一个）">
+        <FormField
+          label="IP请求白名单"
+          help="无视请求速度限制的IP列表（一行一个）"
+        >
           <FormControl
             v-model="whiteList"
             name="whiteList"
@@ -154,7 +163,7 @@ async function save() {
         </FormField>
         <FormField
           label="访问凭证"
-          :help="'Access Token（一行一个）\n· 若为空，则访问无需Token（不安全）\n· 若不为空，则访问时需要在Header中添加Authentication项'"
+          help="若值不为空，请求时“/api”下的任意资源均需要在请求头中添加Authentication项，即“Authentication: Bearer [Token]”"
         >
           <FormControl
             v-model="accessTokens"
@@ -182,7 +191,7 @@ async function save() {
           />
         </FormField>
         <div class="grid grid-cols-1 md:grid-cols-2 md:gap-10 mb-5 md:mb-0">
-          <FormField>
+          <FormField help="自动将使用的证书注册到默认的证书存储区">
             <FormCheckRadio
               v-model="setting.certificate.autoRegisterCertificate"
               type="checkbox"
@@ -191,7 +200,7 @@ async function save() {
               label="自动注册证书"
             />
           </FormField>
-          <FormField>
+          <FormField help="自动从默认的证书存储区中读取证书">
             <FormCheckRadio
               v-model="setting.certificate.autoLoadCertificate"
               type="checkbox"
