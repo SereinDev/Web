@@ -15,7 +15,7 @@ import {
   mdiFileDocumentCheckOutline,
   mdiMenu,
   mdiServer,
-  mdiWifiSettings
+  mdiWifiSettings,
 } from '@mdi/js';
 import { computed, ref } from 'vue';
 import { useToast } from 'vue-toastification';
