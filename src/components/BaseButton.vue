@@ -86,7 +86,7 @@ const componentClass = computed(() => {
     'whitespace-nowrap',
     'focus:outline-none',
     'transition-colors',
-    'focus:ring',
+    'focus:ring-3',
     'duration-150',
     'border',
     props.disabled ? 'cursor-not-allowed' : 'cursor-pointer',

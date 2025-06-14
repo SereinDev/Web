@@ -75,14 +75,15 @@ update();
               has-component-layout
               :class="[
                 'border',
-                'border-gray',
+                'border-gray-300',
+                'hover:border-gray-500',
                 'dark:border-slate-600',
-                'hover:border-gray-800',
                 'hover:dark:border-slate-200',
                 'transition-border',
                 'duration-200',
                 'cursor-pointer',
               ]"
+              rounded="rounded-xl"
             >
               <CardBoxComponentHeader
                 :title="server[1].configuration.name ?? '未命名'"

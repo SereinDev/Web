@@ -1,8 +1,9 @@
 import { sentryVitePlugin } from '@sentry/vite-plugin';
+import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
+import gitRevisionVitePlugin from 'git-revision-vite-plugin';
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
-import GitRevisionVitePlugin from 'git-revision-vite-plugin';
 
 const addr = '127.0.0.1:50000';
 
@@ -10,7 +11,8 @@ const addr = '127.0.0.1:50000';
 export default defineConfig({
   plugins: [
     vue(),
-    GitRevisionVitePlugin(),
+    tailwindcss(),
+    gitRevisionVitePlugin(),
     sentryVitePlugin({
       org: 'sereindev',
       project: 'web',

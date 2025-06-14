@@ -8,7 +8,13 @@ import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import localSettingManager from '@/services/settings/localSettingManager';
-import { mdiEarth, mdiFileDocumentCheckOutline, mdiText } from '@mdi/js';
+import {
+  mdiAlert,
+  mdiEarth,
+  mdiFileDocumentCheckOutline,
+  mdiInformation,
+  mdiText,
+} from '@mdi/js';
 import { reactive } from 'vue';
 import { useToast } from 'vue-toastification';
 
@@ -38,7 +44,7 @@ function save() {
         />
       </SectionTitleLineWithButton>
 
-      <NotificationBar color="info">
+      <NotificationBar color="info" :icon="mdiInformation">
         以下设置仅保存在浏览器中，切换设备或清除浏览器缓存均可能导致该设置丢失
       </NotificationBar>
 
@@ -72,6 +78,19 @@ function save() {
             />
           </FormField>
         </div>
+
+        <NotificationBar
+          v-if="
+            form.maxLines.server > 500 ||
+            form.maxLines.connection > 500 ||
+            form.maxLines.plugin > 500
+          "
+          color="warning"
+          :icon="mdiAlert"
+          class="mt-5"
+        >
+          过高的值可能导致浏览器崩溃
+        </NotificationBar>
       </CardBox>
     </SectionMain>
   </LayoutAuthenticated>
