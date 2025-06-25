@@ -29,16 +29,14 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://' + addr,
-      '/ws/server': {
-        target: 'ws://' + addr,
-        changeOrigin: true,
-        ws: true,
-      },
-      '/ws/connection': {
-        target: 'ws://' + addr,
-        changeOrigin: true,
-        ws: true,
-      },
+      ...['/ws/server', '/ws/connection', '/ws/plugins'].reduce((acc, cur) => {
+        acc[cur] = {
+          target: 'ws://' + addr,
+          changeOrigin: true,
+          ws: true,
+        };
+        return acc;
+      }, {}),
     },
     port: 50001,
   },

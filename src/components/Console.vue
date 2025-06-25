@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { PipePacket } from '@/types/packet';
 import { AnsiUp } from 'ansi_up';
 import { encode } from 'html-entities';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
@@ -7,7 +8,7 @@ const props = defineProps({
   datas: {
     type: Array,
     require: true,
-    default: () => [],
+    default: () => [] as PipePacket[],
   },
   type: {
     type: String,
@@ -49,16 +50,46 @@ onMounted(scrollToBottom);
         >> {{ line.data }}
       </span>
 
-      <span v-else-if="line.type === 'info'">
-        <span class="text-sky-500"
+      <span
+        v-else-if="
+          type !== 'plugins'
+            ? line.type === 'info' || line.type === 'information'
+            : line.type === 'serein'
+        "
+      >
+        <span class="text-[#4B738D]"
           >[<span class="hover:underline hover:font-bold">Serein</span>]</span
         >
         {{ line.data }}
       </span>
 
+      <span
+        v-else-if="
+          type == 'plugins' &&
+          (line.type === 'info' || line.type === 'information')
+        "
+      >
+        <span class="text-sky-500"
+          >[<span class="hover:underline">Info</span>]</span
+        >
+        {{ line.data }}
+      </span>
+
       <span v-else-if="line.type === 'sent' || line.type === 'received'">
-        <span v-if="line.type === 'sent'" class="text-sky-500">[↑]</span>
-        <span v-else class="text-emerald-500">[↓]</span>
+        <span
+          :class="line.type === 'sent' ? 'text-emerald-500' : 'text-blue-500'"
+          >[<span class="hover:underline">{{
+            line.type === 'sent' ? 'Sent' : 'Recv'
+          }}</span
+          >]</span
+        >
+        {{ line.data }}
+      </span>
+
+      <span v-else-if="line.type === 'warning'">
+        <span class="text-yellow-500"
+          >[<span class="hover:underline font-bold">Warn</span>]</span
+        >
         {{ line.data }}
       </span>
 

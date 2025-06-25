@@ -12,7 +12,7 @@ import {
   getConnectionStatus,
   openConnection,
 } from '@/services/apis/connection';
-import { connectWs, events } from '@/services/connection/eventPipe';
+import { packets, pipe } from '@/services/connection';
 import { ConnectionStatus } from '@/types/connection';
 import {
   mdiConnection,
@@ -32,8 +32,7 @@ const status = ref<ConnectionStatus>({} as ConnectionStatus);
 const timer = setInterval(update, 2000);
 const toast = useToast();
 
-connectWs();
-
+pipe.start();
 onBeforeUnmount(() => clearInterval(timer));
 update();
 
@@ -47,10 +46,11 @@ async function update() {
 
 async function toggle() {
   try {
-    if (status.value.active) {
+    if (status.value.isActive) {
       await closeConnection();
     } else {
       await openConnection();
+      packets.value = [];
     }
     status.value = await getConnectionStatus();
   } catch (error) {
@@ -64,7 +64,7 @@ async function toggle() {
       <SectionTitleLineWithButton :icon="mdiConnection" title="连接" main>
         <BaseButtons>
           <BaseButton
-            :icon="status.active ? mdiToggleSwitch : mdiToggleSwitchOff"
+            :icon="status.isActive ? mdiToggleSwitch : mdiToggleSwitchOff"
             color="whiteDark"
             title="切换状态"
             @click="toggle"
@@ -81,26 +81,26 @@ async function toggle() {
         <CardBoxWidget
           color="text-yellow-500"
           :icon="mdiInformationBoxOutline"
-          :value="status.active ? '已连接' : '未连接'"
+          :value="status.isActive ? '已连接' : '未连接'"
           label="状态"
         />
         <CardBoxWidget
           color="text-sky-500"
           :icon="mdiUploadNetworkOutline"
-          :value="status.active ? status.sent : '-'"
+          :value="status.isActive ? status.sent : '-'"
           label="已发送消息数"
         />
         <CardBoxWidget
           color="text-orange-500"
           :icon="mdiDownloadNetworkOutline"
-          :value="status.active ? status.received : '-'"
+          :value="status.isActive ? status.received : '-'"
           label="已接收消息数"
         />
         <CardBoxWidget
           color="text-emerald-500"
           :icon="mdiTimelapse"
           :value="
-            status.active && status.connectedAt
+            status.isActive && status.connectedAt
               ? numeral(
                   (Date.now() - new Date(status.connectedAt).getTime()) / 1000,
                 ).format('00:00:00')
@@ -110,7 +110,7 @@ async function toggle() {
         />
       </div>
       <CardBox has-component-layout class="overflow-hidden mb-5">
-        <Console :datas="events" type="connection" />
+        <Console :datas="packets" type="connection" />
       </CardBox>
     </SectionMain>
   </LayoutAuthenticated>

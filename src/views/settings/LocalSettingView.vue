@@ -81,9 +81,9 @@ function save() {
 
         <NotificationBar
           v-if="
-            form.maxLines.server > 500 ||
-            form.maxLines.connection > 500 ||
-            form.maxLines.plugin > 500
+            form.maxLines.server > 1000 ||
+            form.maxLines.connection > 1000 ||
+            form.maxLines.plugin > 1000
           "
           color="warning"
           :icon="mdiAlert"

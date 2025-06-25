@@ -16,7 +16,7 @@ import {
   removeServer,
   updateConfiguration,
 } from '@/services/apis/server';
-import { getServersWithCache } from '@/services/servers/manager';
+import { getServersWithCache } from '@/services/servers/management';
 import { Configuration } from '@/types/server';
 import {
   mdiArrowLeft,

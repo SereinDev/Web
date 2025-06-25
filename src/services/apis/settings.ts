@@ -1,6 +1,6 @@
 import client from '@/services/apis/client';
-import { Packet } from '@/types/packet';
-import { Settings } from '@/types/settings';
+import { type Packet } from '@/types/packet';
+import { type Settings } from '@/types/settings';
 
 export async function getSettings(): Promise<Settings> {
   const response = await client.get<Packet<Settings>>('/settings');

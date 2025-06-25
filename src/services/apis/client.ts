@@ -1,7 +1,7 @@
 import router from '@/router';
 import { useMainStore } from '@/stores/main';
-import { Packet } from '@/types/packet';
-import axios, { AxiosError } from 'axios';
+import { type Packet } from '@/types/packet';
+import axios, { isAxiosError } from 'axios';
 import { useToast } from 'vue-toastification';
 
 const toast = useToast();
@@ -20,7 +20,7 @@ client.interceptors.request.use((value) => {
 });
 
 client.interceptors.response.use(undefined, (err) => {
-  if (err instanceof AxiosError && err.response)
+  if (isAxiosError(err) && err.response)
     if (
       err.response.status === 401 &&
       err.request instanceof XMLHttpRequest &&

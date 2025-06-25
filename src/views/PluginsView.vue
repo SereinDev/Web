@@ -9,7 +9,12 @@ import Console from '@/components/Console.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
-import { getPlugins } from '@/services/apis/plugin';
+import {
+  disablePlugin,
+  getPlugins,
+  reloadPlugins,
+} from '@/services/apis/plugin';
+import { packets, pipe } from '@/services/pluginManager';
 import { Plugin } from '@/types/plugin';
 import {
   mdiAccountGroupOutline,
@@ -19,6 +24,8 @@ import {
   mdiInformationOutline,
   mdiPackage,
   mdiPuzzleOutline,
+  mdiRefresh,
+  mdiReloadAlert,
   mdiStopCircleOutline,
   mdiTagOutline,
   mdiViewListOutline,
@@ -26,6 +33,9 @@ import {
 import { computed, ref } from 'vue';
 import { useToast } from 'vue-toastification';
 
+pipe.start();
+
+const isLoading = ref(false);
 const isModalInfoActive = ref(false);
 const current = ref<Plugin>();
 const toast = useToast();
@@ -54,11 +64,43 @@ update();
 
 async function update() {
   try {
-    items.value = Object.entries(await getPlugins()).map((kv) => kv[1]);
+    isLoading.value = true;
+    items.value = Object.entries(await getPlugins())
+      .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+      .map((kv) => kv[1]);
   } catch (error) {
     items.value = [];
     toast.error('获取插件列表失败，原因：' + String(error));
+  } finally {
+    isLoading.value = false;
   }
+}
+
+async function disable(id: string) {
+  try {
+    isLoading.value = true;
+    await disablePlugin(id);
+    toast.success(`插件${id}已禁用`);
+  } catch (error) {
+    toast.error(`禁用插件${id}失败，原因：` + String(error));
+  } finally {
+    isLoading.value = false;
+  }
+  await update();
+}
+
+async function reload() {
+  try {
+    isLoading.value = true;
+    await reloadPlugins();
+
+    toast.success('插件已重新加载');
+    items.value = [];
+    packets.value = [];
+  } catch (error) {
+    toast.error('重新加载插件失败，原因：' + String(error));
+  }
+  setTimeout(update, 1000);
 }
 </script>
 <template>
@@ -71,7 +113,15 @@ async function update() {
 
         <BaseIcon :path="mdiTagOutline" />
         <span>标签</span>
-        <span>{{ current?.info.tags }}</span>
+        <div>
+          <span
+            v-for="(tag, i) in current?.info.tags"
+            :key="i"
+            class="bg-gray-100 dark:bg-gray-700 py-1 px-2 rounded-md mr-2 text-sm"
+          >
+            {{ ['娱乐', '开发', '工具', '信息', '管理', 'API'][tag] }}
+          </span>
+        </div>
 
         <BaseIcon :path="mdiCodeJson" />
         <span>类型</span>
@@ -124,17 +174,32 @@ async function update() {
         main
         no-button
       >
+        <BaseButton
+          :icon="mdiReloadAlert"
+          color="whiteDark"
+          title="重新加载所有插件"
+          :disabled="isLoading"
+          @click="reload"
+        />
       </SectionTitleLineWithButton>
 
       <CardBox has-component-layout class="overflow-hidden mb-5">
-        <Console type="plugins" />
+        <Console type="plugins" :datas="packets" />
       </CardBox>
 
       <SectionTitleLineWithButton
         title="插件列表"
         no-button
         :icon="mdiViewListOutline"
-      />
+      >
+        <BaseButton
+          :icon="mdiRefresh"
+          color="whiteDark"
+          title="刷新"
+          :disabled="isLoading"
+          @click="update"
+        />
+      </SectionTitleLineWithButton>
       <CardBox>
         <table>
           <thead>
@@ -153,7 +218,10 @@ async function update() {
                 data-label="名称"
                 :class="{ 'text-gray-500': !item.isEnabled }"
               >
-                {{ item.info.name }}
+                <span v-if="item.info.name">
+                  {{ item.info.name }}
+                </span>
+                <i v-else> 未知 </i>
               </td>
               <td
                 data-label="状态"
@@ -201,11 +269,12 @@ async function update() {
                     "
                   />
                   <BaseButton
-                    color="lightdark"
+                    :color="!item.isEnabled ? 'lightDark' : 'danger'"
                     outline
                     :disabled="!item.isEnabled"
                     :icon="mdiStopCircleOutline"
                     small
+                    @click="disable(item.info.id)"
                   />
                 </BaseButtons>
               </td>

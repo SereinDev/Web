@@ -27,6 +27,7 @@ app.use(pinia);
 app.use(Toast, {
   maxToasts: 5,
   pauseOnFocusLoss: false,
+  timeout: 3000,
 } satisfies PluginOptions);
 
 Sentry.init({

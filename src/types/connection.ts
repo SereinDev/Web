@@ -1,11 +1,6 @@
 export interface ConnectionStatus {
-  active: boolean;
+  isActive: boolean;
   sent: number;
   received: number;
   connectedAt: string | null;
-}
-
-export interface DataTranferredEvent {
-  type: 'sent' | 'received';
-  data: string;
 }

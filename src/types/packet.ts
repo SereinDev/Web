@@ -4,3 +4,8 @@ export interface Packet<T> {
   errorMsg?: string;
   time: string;
 }
+
+export interface PipePacket {
+  type: string;
+  data?: string;
+}

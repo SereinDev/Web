@@ -1,87 +1,69 @@
 import router from '@/router';
 import { getServerHistory } from '@/services/apis/server';
-import { getServersWithCache } from '@/services/servers/manager';
-import { useMainStore } from '@/stores/main';
-import { type Server } from '@/types/server';
+import { getServersWithCache } from '@/services/servers/management';
 import localSettingManager from '@/services/settings/localSettingManager';
+import { WebSocketPipe } from '@/services/webSocketPipe';
+import { useMainStore } from '@/stores/main';
+import { PipePacket } from '@/types/packet';
+import type { Server } from '@/types/server';
 import { environment } from '@/utils/constants';
 import { Ref, ref } from 'vue';
 import { useToast } from 'vue-toastification';
 
-class ServerEventPipe {
-  public readonly output: Ref<{ type: string; data?: string }[]>;
+export class ServerEventPipe extends WebSocketPipe {
+  public readonly output: Ref<PipePacket[]>;
 
   private readonly id: string;
   private server: Ref<Server>;
-  private ws: WebSocket | null;
-  private isStopped = false;
 
   public constructor(id: string, serverRef: Ref<Server>) {
+    super(() => {
+      let url =
+        (location.protocol === 'https:' ? 'wss://' : 'ws://') +
+        `${location.host}/ws/server?` +
+        new URLSearchParams({
+          id,
+          token: useMainStore().accessToken || undefined,
+        }).toString();
+
+      return url;
+    });
+
     this.id = id;
-    this.ws = this.createNewWs();
     this.output = ref([]);
     this.server = serverRef;
-  }
 
-  private createNewWs() {
-    let url =
-      (location.protocol === 'https:' ? 'wss://' : 'ws://') +
-      `${location.host}/ws/server?id=${encodeURIComponent(this.id)}`;
-
-    const token = useMainStore().accessToken;
-
-    if (token) {
-      url += `&token=${encodeURIComponent(token)}`;
-    }
-
-    const ws = new WebSocket(url);
-    ws.addEventListener('message', (ev) => this.handleMessage(ev));
-    ws.addEventListener('close', () => this.onClose());
-    ws.addEventListener('open', async () => {
+    this.onOpen = async () => {
       const history = await getServerHistory(this.id);
       if (!this.server.value?.configuration.outputCommandUserInput) {
         this.output.value = history.filter((line) => line.type !== 'input');
       }
 
       this.output.value = history;
-    });
+    };
 
-    return ws;
-  }
-
-  private async onClose() {
-    if (this.isStopped) {
-      return;
-    }
-
-    if (!(await getServersWithCache()[this.id])) {
-      return;
-    }
-
-    setTimeout(() => {
-      this.ws = this.createNewWs();
-    }, 500);
-  }
-
-  public stop() {
-    this.isStopped = true;
-
-    setTimeout(() => {
-      if (this.isStopped) {
-        this.ws?.close();
+    this.onClose = async () => {
+      if (!(await getServersWithCache()[this.id])) {
+        return;
       }
-    }, 5000);
+
+      this.stop();
+    };
+
+    this.onMessage = this.handleMessage;
+
+    this.start();
   }
 
   public restore(serverRef: Ref<Server>) {
     this.server = serverRef;
-    this.isStopped = false;
 
     if (
+      !this.ws ||
       this.ws.readyState === WebSocket.CLOSED ||
       this.ws.readyState === WebSocket.CLOSING
     ) {
-      this.ws = this.createNewWs();
+      this.start();
     }
   }
 
@@ -127,7 +109,6 @@ class ServerEventPipe {
       case 'error':
       case 'output':
         this.output.value.push({ type, data });
-
         break;
     }
 
@@ -144,20 +125,6 @@ class ServerEventPipe {
     }
 
     const packet = JSON.parse(ev.data);
-    void this.handlePacket(packet);
+    this.handlePacket(packet);
   }
-}
-
-const map = new Map<string, ServerEventPipe>();
-
-export function createServerEventPipe(id: string, server: Ref<Server>) {
-  if (map.has(id)) {
-    const pipe = map.get(id)!;
-    pipe.restore(server);
-    return pipe;
-  }
-
-  const pipe = new ServerEventPipe(id, server);
-  map.set(id, pipe);
-  return pipe;
 }

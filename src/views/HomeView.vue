@@ -4,7 +4,7 @@ import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import { getCpuInfo, getMemoryStatus } from '@/services/apis/hardware';
-import { getServersWithCache } from '@/services/servers/manager';
+import { getServersWithCache } from '@/services/servers/management';
 import { CpuInfo, MemoryStatus } from '@/types/hardware';
 import { Servers } from '@/types/server';
 import {

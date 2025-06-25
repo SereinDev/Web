@@ -17,8 +17,10 @@ import {
   stopServer,
   terminateServer,
 } from '@/services/apis/server';
-import { createServerEventPipe } from '@/services/servers/eventPipe';
-import { getServersWithCache } from '@/services/servers/manager';
+import {
+  createServerEventPipe,
+  getServersWithCache,
+} from '@/services/servers/management';
 import { Server } from '@/types/server';
 import {
   mdiAlert,
@@ -46,7 +48,7 @@ const timer = setInterval(update, 1000);
 
 const server = ref<Server>();
 const online = ref(true);
-const eventPipe = createServerEventPipe(id.value, server);
+const serverEventPipe = createServerEventPipe(id.value, server);
 
 const input = ref('');
 const inputRef = ref<{ inputEl: HTMLElement }>();
@@ -98,7 +100,7 @@ async function operate(type: 'start' | 'stop' | 'terminate' | 'input') {
 
 update();
 onBeforeUnmount(() => clearInterval(timer));
-onBeforeUnmount(() => eventPipe?.stop());
+onBeforeUnmount(() => serverEventPipe?.stop());
 </script>
 
 <template>
@@ -185,7 +187,7 @@ onBeforeUnmount(() => eventPipe?.stop());
 
       <SectionTitleLineWithButton :icon="mdiConsole" title="控制台" no-button />
       <CardBox has-component-layout class="overflow-hidden mb-5">
-        <Console :datas="eventPipe.output.value" type="server" />
+        <Console :datas="serverEventPipe.output.value" type="server" />
       </CardBox>
 
       <div class="flex w-full">

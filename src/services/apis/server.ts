@@ -1,6 +1,6 @@
 import client from '@/services/apis/client';
-import { Packet } from '@/types/packet';
-import { Configuration, Server, Servers } from '@/types/server';
+import { type Packet } from '@/types/packet';
+import { type Configuration, type Server, type Servers } from '@/types/server';
 
 export async function getServers(): Promise<Servers> {
   const response = await client.get<Packet<Servers>>('/servers');
