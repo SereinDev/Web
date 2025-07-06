@@ -20,7 +20,7 @@ const scrollToBottom = () =>
   (consoleRef.value.scrollTop = consoleRef.value.scrollHeight ?? 0);
 
 const consoleRef = ref();
-const typed = computed(() => props.datas as { type: string; data: string }[]);
+const typed = computed(() => props.datas as PipePacket[]);
 const length = computed(() => props.datas.length);
 const ansiUp = new AnsiUp();
 ansiUp.use_classes = true;
@@ -37,38 +37,27 @@ onMounted(scrollToBottom);
       class="whitespace-pre-wrap break-all hover:bg-[#8881] px-3 transition-colors"
     >
       <span
-        v-if="line.type === 'output' && type === 'server'"
+        v-if="line.type === 'output' && line.origin === 'server'"
         v-html="ansiUp.ansi_to_html(line.data)"
       >
       </span>
 
       <span
-        v-else-if="line.type === 'input' && type === 'server'"
+        v-else-if="line.type === 'input' && line.origin === 'server'"
         class="opacity-70"
         title="输入"
       >
         >> {{ line.data }}
       </span>
 
-      <span
-        v-else-if="
-          type !== 'plugins'
-            ? line.type === 'info' || line.type === 'information'
-            : line.type === 'serein'
-        "
-      >
+      <span v-else-if="line.type === 'information' && line.origin === 'Serein'">
         <span class="text-[#4B738D]"
           >[<span class="hover:underline hover:font-bold">Serein</span>]</span
         >
         {{ line.data }}
       </span>
 
-      <span
-        v-else-if="
-          type == 'plugins' &&
-          (line.type === 'info' || line.type === 'information')
-        "
-      >
+      <span v-else-if="type == 'plugins' && line.type === 'information'">
         <span class="text-sky-500"
           >[<span class="hover:underline">Info</span>]</span
         >
@@ -90,14 +79,14 @@ onMounted(scrollToBottom);
         <span class="text-yellow-500"
           >[<span class="hover:underline font-bold">Warn</span>]</span
         >
-        {{ line.data }}
+        {{ type === 'plugins' ? `[${line.origin}] ${line.data}` : line.data }}
       </span>
 
       <span v-else-if="line.type === 'error'">
         <span class="text-red-500"
           >[<span class="hover:underline font-bold">Error</span>]</span
         >
-        {{ line.data }}
+        {{ type === 'plugins' ? `[${line.origin}] ${line.data}` : line.data }}
       </span>
 
       <span v-else v-html="encode(line.data)"></span>

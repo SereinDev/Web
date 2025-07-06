@@ -6,8 +6,8 @@ import SectionBannerStarOnGitHub from '@/components/SectionBannerStarOnGitHub.vu
 import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
-import { getMetadata } from '@/services/apis';
-import { Metadata } from '@/types/metadata';
+import { getAppInfo } from '@/services/apis';
+import { AppInfo } from '@/types/app';
 import { discussionUrl, docsUrl, gitInfo } from '@/utils/constants';
 import {
   mdiBookOpenOutline,
@@ -16,8 +16,8 @@ import {
 } from '@mdi/js';
 import { ref } from 'vue';
 
-const metadata = ref<Metadata>();
-getMetadata().then((res) => (metadata.value = res));
+const appInfo = ref<AppInfo>();
+getAppInfo().then((res) => (appInfo.value = res));
 </script>
 
 <template>
@@ -41,9 +41,9 @@ getMetadata().then((res) => (metadata.value = res));
         </div>
         <div class="p-2">
           <div class="font-bold">后端版本</div>
-          <code v-if="metadata" class="select-all break-all">
-            Serein.{{ ['Cli', 'Plus', 'Lite'][metadata?.type] }}@{{
-              metadata?.fullVersion
+          <code v-if="appInfo" class="select-all break-all">
+            Serein.{{ ['Unknown', 'Cli', 'Lite', 'Plus'][appInfo?.type] }}@{{
+              appInfo?.fullVersion
             }}
           </code>
           <code v-else> ... </code>

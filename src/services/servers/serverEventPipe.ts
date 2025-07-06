@@ -18,7 +18,7 @@ export class ServerEventPipe extends WebSocketPipe {
 
   public constructor(id: string, serverRef: Ref<Server>) {
     super(() => {
-      let url =
+      const url =
         (location.protocol === 'https:' ? 'wss://' : 'ws://') +
         `${location.host}/ws/server?` +
         new URLSearchParams({
@@ -67,20 +67,9 @@ export class ServerEventPipe extends WebSocketPipe {
     }
   }
 
-  private async handlePacket({
-    data,
-    type,
-  }: {
-    type:
-      | 'started'
-      | 'stopped'
-      | 'removed'
-      | 'input'
-      | 'output'
-      | 'error'
-      | 'info';
-    data?: string;
-  }) {
+  private async handlePacket(packet: PipePacket) {
+    const { type, data } = packet;
+
     switch (type) {
       case 'started':
         this.output.value = [];
@@ -101,14 +90,14 @@ export class ServerEventPipe extends WebSocketPipe {
 
       case 'input':
         if (this.server.value?.configuration.outputCommandUserInput) {
-          this.output.value.push({ type, data });
+          this.output.value.push(packet);
         }
         break;
 
-      case 'info':
+      case 'information':
       case 'error':
       case 'output':
-        this.output.value.push({ type, data });
+        this.output.value.push(packet);
         break;
     }
 

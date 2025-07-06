@@ -5,6 +5,7 @@ import BaseIcon from '@/components/BaseIcon.vue';
 import CardBox from '@/components/CardBox.vue';
 import CardBoxComponentEmpty from '@/components/CardBoxComponentEmpty.vue';
 import CardBoxComponentHeader from '@/components/CardBoxComponentHeader.vue';
+import LoadingContainer from '@/components/LoadingContainer.vue';
 import NotificationBar from '@/components/NotificationBar.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
@@ -18,6 +19,7 @@ import { Server } from '@/types/server';
 import {
   mdiFileOutline,
   mdiInformation,
+  mdiLoading,
   mdiPlus,
   mdiRefresh,
   mdiServerOutline,
@@ -28,14 +30,21 @@ import { useToast } from 'vue-toastification';
 
 const servers: Ref<[string, Server][]> = ref([]);
 const toast = useToast();
+const isLoading = ref(false);
 
 async function update(refresh: boolean = false) {
+  if (isLoading.value) {
+    return;
+  }
+
   try {
+    isLoading.value = true;
     servers.value = Object.entries(await getServersWithCache(refresh));
   } catch (error) {
     servers.value = [];
     toast.error('获取服务器失败，原因：' + String(error));
   }
+  isLoading.value = false;
 }
 
 update();
@@ -59,11 +68,12 @@ update();
             :icon="mdiRefresh"
             color="whiteDark"
             title="刷新"
+            :disabled="isLoading"
             @click="() => update(true)"
           />
         </BaseButtons>
       </SectionTitleLineWithButton>
-      <div class="min-h-80">
+      <LoadingContainer class="min-h-80" :is-loading="isLoading">
         <div
           v-if="servers.length > 0"
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"
@@ -136,7 +146,7 @@ update();
           </NotificationBar>
           <CardBoxComponentEmpty message="啥都没有找到哦..." />
         </div>
-      </div>
+      </LoadingContainer>
     </SectionMain>
   </LayoutAuthenticated>
 </template>

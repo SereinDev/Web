@@ -6,6 +6,7 @@ import CardBoxModal from '@/components/CardBoxModal.vue';
 import FormCheckRadio from '@/components/FormCheckRadio.vue';
 import FormControl from '@/components/FormControl.vue';
 import FormField from '@/components/FormField.vue';
+import LoadingContainer from '@/components/LoadingContainer.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
@@ -221,94 +222,98 @@ update();
         </BaseButtons>
       </SectionTitleLineWithButton>
 
-      <table>
-        <thead>
-          <tr class="break-keep">
-            <th>正则表达式</th>
-            <th>匹配域</th>
-            <th>命令</th>
-            <th>描述</th>
-            <th>需要管理权限</th>
-            <th>排除参数</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in itemsPaginated" :key="item.id">
-            <td data-label="正则表达式">
-              <code class="break-all">{{ item.regExp }}</code>
-            </td>
-            <td data-label="匹配域" class="break-keep">
-              {{ options[item.fieldType].label }}
-            </td>
-            <td data-label="命令">
-              <code class="break-all">{{ item.command }}</code>
-            </td>
-            <td data-label="描述">
-              <span class="break-all">
-                {{ item.description }}
-              </span>
-            </td>
-            <td data-label="需要管理权限">
-              {{ item.requireAdmin ? '是' : '否' }}
-            </td>
-            <td data-label="排除参数">
-              <code class="break-all">
-                {{ item.exclusions }}
-              </code>
-            </td>
+      <LoadingContainer :is-loading="isLoading">
+        <table>
+          <thead>
+            <tr class="break-keep">
+              <th>正则表达式</th>
+              <th>匹配域</th>
+              <th>命令</th>
+              <th>描述</th>
+              <th>需要管理权限</th>
+              <th>排除参数</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in itemsPaginated" :key="item.id">
+              <td data-label="正则表达式">
+                <code class="break-all">{{ item.regExp }}</code>
+              </td>
+              <td data-label="匹配域" class="break-keep">
+                {{ options[item.fieldType].label }}
+              </td>
+              <td data-label="命令">
+                <code class="break-all">{{ item.command }}</code>
+              </td>
+              <td data-label="描述">
+                <span class="break-all">
+                  {{ item.description }}
+                </span>
+              </td>
+              <td data-label="需要管理权限">
+                {{ item.requireAdmin ? '是' : '否' }}
+              </td>
+              <td data-label="排除参数">
+                <code class="break-all">
+                  {{ item.exclusions }}
+                </code>
+              </td>
 
-            <td class="before:hidden lg:w-1 whitespace-nowrap">
-              <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                <BaseButton
-                  outline
-                  color="lightdark"
-                  :icon="mdiPencil"
-                  small
-                  @click="
-                    () => {
-                      current = item;
-                      isModalActive = true;
-                    }
-                  "
-                />
-                <BaseButton
-                  outline
-                  color="danger"
-                  :icon="mdiTrashCan"
-                  small
-                  @click="
-                    () => {
-                      isModalDangerActive = true;
-                      current = reactive(item);
-                    }
-                  "
-                />
-              </BaseButtons>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
-        <BaseLevel>
-          <BaseButtons>
-            <BaseButton
-              v-for="page in pagesList"
-              :key="page"
-              :active="page === currentPage"
-              :label="page + 1"
-              :color="page === currentPage ? 'lightDark' : 'whiteDark'"
-              small
-              @click="currentPage = page"
-            />
-          </BaseButtons>
-          <small
-            >共{{ items.length }}项，第{{ currentPageHuman }}页，共{{
-              numPages
-            }}页</small
-          >
-        </BaseLevel>
-      </div>
+              <td class="before:hidden lg:w-1 whitespace-nowrap">
+                <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                  <BaseButton
+                    outline
+                    color="lightdark"
+                    :icon="mdiPencil"
+                    small
+                    @click="
+                      () => {
+                        current = item;
+                        isModalActive = true;
+                      }
+                    "
+                  />
+                  <BaseButton
+                    outline
+                    color="danger"
+                    :icon="mdiTrashCan"
+                    small
+                    @click="
+                      () => {
+                        isModalDangerActive = true;
+                        current = reactive(item);
+                      }
+                    "
+                  />
+                </BaseButtons>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
+          <BaseLevel>
+            <BaseButtons>
+              <BaseButton
+                v-for="page in pagesList"
+                :key="page"
+                :active="page === currentPage"
+                :label="page + 1"
+                :color="page === currentPage ? 'lightDark' : 'whiteDark'"
+                small
+                @click="currentPage = page"
+              />
+            </BaseButtons>
+            <small
+              >共{{ items.length }}项，第{{ currentPageHuman }}页，共{{
+                numPages
+              }}页</small
+            >
+          </BaseLevel>
+        </div>
+      </LoadingContainer>
+
       <BaseButtons class="mt-5">
         <BaseButton
           label="文档§匹配"

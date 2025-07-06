@@ -5,7 +5,7 @@ import { gitInfo } from '@/utils/constants';
 </script>
 
 <template>
-  <footer class="py-2 px-6" :class="containerMaxW">
+  <footer class="py-4 px-6" :class="containerMaxW">
     <BaseLevel>
       <div class="text-center md:text-left">
         <b>&copy;2025, SereinDev.</b>

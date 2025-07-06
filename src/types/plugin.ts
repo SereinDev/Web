@@ -14,6 +14,10 @@ export interface Plugin {
     tags: number[];
     dependencies: { id: string; version: string }[];
     entryFile: string;
+    targets: {
+      min?: string;
+      max?: string;
+    };
   };
   isEnabled: boolean;
 }

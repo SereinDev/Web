@@ -6,6 +6,7 @@ import BaseLevel from '@/components/BaseLevel.vue';
 import CardBox from '@/components/CardBox.vue';
 import CardBoxModal from '@/components/CardBoxModal.vue';
 import Console from '@/components/Console.vue';
+import LoadingContainer from '@/components/LoadingContainer.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
@@ -201,106 +202,113 @@ async function reload() {
         />
       </SectionTitleLineWithButton>
       <CardBox>
-        <table>
-          <thead>
-            <tr class="break-keep">
-              <th>名称</th>
-              <th>状态</th>
-              <th>版本</th>
-              <th>作者</th>
-              <th>描述</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in itemsPaginated" :key="item.info.id">
-              <td
-                data-label="名称"
-                :class="{ 'text-gray-500': !item.isEnabled }"
-              >
-                <span v-if="item.info.name">
-                  {{ item.info.name }}
-                </span>
-                <i v-else> 未知 </i>
-              </td>
-              <td
-                data-label="状态"
-                :class="{ 'text-gray-500': !item.isEnabled }"
-              >
-                {{ item.isEnabled ? '已启用' : '已禁用' }}
-              </td>
-              <td
-                data-label="版本"
-                :class="{ 'text-gray-500': !item.isEnabled }"
-              >
-                <code class="break-all">
-                  {{ item.info.version }}
-                </code>
-              </td>
-              <td
-                data-label="作者"
-                :class="{ 'text-gray-500': !item.isEnabled }"
-              >
-                <span v-for="(author, index) in item.info.authors" :key="index">
-                  {{ author.name }}
-                  <br />
-                </span>
-              </td>
-              <td
-                data-label="描述"
-                class="break-all"
-                :class="{ 'text-gray-500': !item.isEnabled }"
-              >
-                {{ item.info.description }}
-              </td>
+        <LoadingContainer :is-loading="isLoading">
+          <table>
+            <thead>
+              <tr class="break-keep">
+                <th>名称</th>
+                <th>状态</th>
+                <th>版本</th>
+                <th>作者</th>
+                <th>描述</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in itemsPaginated" :key="item.info.id">
+                <td
+                  data-label="名称"
+                  :class="{ 'text-gray-500': !item.isEnabled }"
+                >
+                  <span v-if="item.info.name">
+                    {{ item.info.name }}
+                  </span>
+                  <i v-else> 未知 </i>
+                </td>
+                <td
+                  data-label="状态"
+                  :class="{ 'text-gray-500': !item.isEnabled }"
+                >
+                  {{ item.isEnabled ? '已启用' : '已禁用' }}
+                </td>
+                <td
+                  data-label="版本"
+                  :class="{ 'text-gray-500': !item.isEnabled }"
+                >
+                  <code class="break-all">
+                    {{ item.info.version }}
+                  </code>
+                </td>
+                <td
+                  data-label="作者"
+                  :class="{ 'text-gray-500': !item.isEnabled }"
+                >
+                  <span
+                    v-for="(author, index) in item.info.authors"
+                    :key="index"
+                  >
+                    {{ author.name }}
+                    <br />
+                  </span>
+                </td>
+                <td
+                  data-label="描述"
+                  class="break-all"
+                  :class="{ 'text-gray-500': !item.isEnabled }"
+                >
+                  {{ item.info.description }}
+                </td>
 
-              <td class="before:hidden lg:w-1 whitespace-nowrap">
-                <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                  <BaseButton
-                    color="lightdark"
-                    outline
-                    :icon="mdiInformationOutline"
-                    small
-                    @click="
-                      () => {
-                        isModalInfoActive = true;
-                        current = item;
-                      }
-                    "
-                  />
-                  <BaseButton
-                    :color="!item.isEnabled ? 'lightDark' : 'danger'"
-                    outline
-                    :disabled="!item.isEnabled"
-                    :icon="mdiStopCircleOutline"
-                    small
-                    @click="disable(item.info.id)"
-                  />
-                </BaseButtons>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
-          <BaseLevel>
-            <BaseButtons>
-              <BaseButton
-                v-for="page in pagesList"
-                :key="page"
-                :active="page === currentPage"
-                :label="page + 1"
-                :color="page === currentPage ? 'lightDark' : 'whiteDark'"
-                small
-                @click="currentPage = page"
-              />
-            </BaseButtons>
-            <small
-              >共{{ items.length }}项，第{{ currentPageHuman }}页，共{{
-                numPages
-              }}页</small
-            >
-          </BaseLevel>
-        </div>
+                <td class="before:hidden lg:w-1 whitespace-nowrap">
+                  <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                    <BaseButton
+                      color="lightdark"
+                      outline
+                      :icon="mdiInformationOutline"
+                      small
+                      @click="
+                        () => {
+                          isModalInfoActive = true;
+                          current = item;
+                        }
+                      "
+                    />
+                    <BaseButton
+                      :color="!item.isEnabled ? 'lightDark' : 'danger'"
+                      outline
+                      :disabled="!item.isEnabled"
+                      :icon="mdiStopCircleOutline"
+                      small
+                      @click="disable(item.info.id)"
+                    />
+                  </BaseButtons>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div
+            class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800"
+          >
+            <BaseLevel>
+              <BaseButtons>
+                <BaseButton
+                  v-for="page in pagesList"
+                  :key="page"
+                  :active="page === currentPage"
+                  :label="page + 1"
+                  :color="page === currentPage ? 'lightDark' : 'whiteDark'"
+                  small
+                  @click="currentPage = page"
+                />
+              </BaseButtons>
+              <small
+                >共{{ items.length }}项，第{{ currentPageHuman }}页，共{{
+                  numPages
+                }}页</small
+              >
+            </BaseLevel>
+          </div>
+        </LoadingContainer>
       </CardBox>
     </SectionMain>
   </LayoutAuthenticated>

@@ -24,7 +24,8 @@ pipe.onMessage = (data: MessageEvent) => {
   if (
     ['received', 'sent', 'information', 'warning', 'error'].includes(
       packet.type,
-    )
+    ) &&
+    packet.origin === 'Serein'
   ) {
     packets.value.push(packet);
   }

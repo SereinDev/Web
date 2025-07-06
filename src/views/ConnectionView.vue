@@ -100,9 +100,9 @@ async function toggle() {
           color="text-emerald-500"
           :icon="mdiTimelapse"
           :value="
-            status.isActive && status.connectedAt
+            status.isActive && status.startedAt
               ? numeral(
-                  (Date.now() - new Date(status.connectedAt).getTime()) / 1000,
+                  (Date.now() - new Date(status.startedAt).getTime()) / 1000,
                 ).format('00:00:00')
               : '-'
           "

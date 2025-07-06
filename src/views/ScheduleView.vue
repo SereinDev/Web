@@ -6,6 +6,7 @@ import CardBoxModal from '@/components/CardBoxModal.vue';
 import FormCheckRadio from '@/components/FormCheckRadio.vue';
 import FormControl from '@/components/FormControl.vue';
 import FormField from '@/components/FormField.vue';
+import LoadingContainer from '@/components/LoadingContainer.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
@@ -28,6 +29,7 @@ import {
 import { computed, reactive, ref } from 'vue';
 import { useToast } from 'vue-toastification';
 
+const isLoading = ref(false);
 const toast = useToast();
 const current = ref({} as Schedule);
 const isModalActive = ref(false);
@@ -54,17 +56,24 @@ const pagesList = computed(() => {
 });
 
 async function update() {
+  if (isLoading.value) {
+    return;
+  }
   try {
+    isLoading.value = true;
     items.value = await getSchedules();
   } catch (error) {
     items.value = [];
     toast.error('获取定时任务失败，原因：' + String(error));
   }
+
+  isLoading.value = false;
 }
 
 async function confirm() {
   if (!current.value.id) {
     try {
+      isLoading.value = true;
       await addSchedule(current.value);
 
       toast.success('添加成功');
@@ -74,6 +83,7 @@ async function confirm() {
     }
   } else {
     try {
+      isLoading.value = true;
       const id = current.value.id;
       current.value.id = undefined;
       await editSchedule(id, current.value);
@@ -85,6 +95,7 @@ async function confirm() {
   }
 
   await update();
+  isLoading.value = false;
 }
 
 async function remove() {
@@ -92,6 +103,7 @@ async function remove() {
     if (!current.value?.id) {
       return;
     }
+    isLoading.value = true;
 
     await removeSchedule(current.value.id);
     toast.success('删除成功');
@@ -100,6 +112,7 @@ async function remove() {
   }
 
   await update();
+  isLoading.value = false;
 }
 
 update();
@@ -172,105 +185,108 @@ update();
             :icon="mdiRefresh"
             color="whiteDark"
             title="刷新"
+            :disabled="isLoading"
             @click="update"
           />
         </BaseButtons>
       </SectionTitleLineWithButton>
 
-      <table>
-        <thead>
-          <tr class="break-keep">
-            <th>Cron表达式</th>
-            <th>命令</th>
-            <th>描述</th>
-            <th>状态</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in itemsPaginated" :key="item.id">
-            <td data-label="Cron表达式">
-              <code class="break-all">{{ item.expression }}</code>
-            </td>
-            <td data-label="命令">
-              <code class="break-all">{{ item.command }}</code>
-            </td>
-            <td data-label="描述">
-              <span class="break-all">
-                {{ item.description }}
-              </span>
-            </td>
-            <td data-label="状态">
-              {{ item.isEnabled ? '启用' : '禁用' }}
-            </td>
+      <LoadingContainer :is-loading="isLoading">
+        <table>
+          <thead>
+            <tr class="break-keep">
+              <th>Cron表达式</th>
+              <th>命令</th>
+              <th>描述</th>
+              <th>状态</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in itemsPaginated" :key="item.id">
+              <td data-label="Cron表达式">
+                <code class="break-all">{{ item.expression }}</code>
+              </td>
+              <td data-label="命令">
+                <code class="break-all">{{ item.command }}</code>
+              </td>
+              <td data-label="描述">
+                <span class="break-all">
+                  {{ item.description }}
+                </span>
+              </td>
+              <td data-label="状态">
+                {{ item.isEnabled ? '启用' : '禁用' }}
+              </td>
 
-            <td class="before:hidden lg:w-1 whitespace-nowrap">
-              <BaseButtons type="justify-start lg:justify-end" no-wrap>
-                <BaseButton
-                  color="lightdark"
-                  outline
-                  :icon="mdiPencil"
-                  small
-                  @click="
-                    () => {
-                      current = item;
-                      isModalActive = true;
-                    }
-                  "
-                />
-                <BaseButton
-                  color="danger"
-                  outline
-                  :icon="mdiTrashCan"
-                  small
-                  @click="
-                    () => {
-                      isModalDangerActive = true;
-                      current = reactive(item);
-                    }
-                  "
-                />
-              </BaseButtons>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
-        <BaseLevel>
-          <BaseButtons>
-            <BaseButton
-              v-for="page in pagesList"
-              :key="page"
-              :active="page === currentPage"
-              :label="page + 1"
-              :color="page === currentPage ? 'lightDark' : 'whiteDark'"
-              small
-              @click="currentPage = page"
-            />
-          </BaseButtons>
-          <small
-            >共{{ items.length }}项，第{{ currentPageHuman }}页，共{{
-              numPages
-            }}页</small
-          >
-        </BaseLevel>
-      </div>
-      <BaseButtons class="mt-5">
-        <BaseButton
-          label="文档§定时任务"
-          color="whitedark"
-          target="_blank"
-          :href="docsUrl + '/docs/guidance/schedule'"
-          :icon="mdiBookOpenOutline"
-        />
-        <BaseButton
-          label="文档§变量"
-          color="whitedark"
-          target="_blank"
-          :href="docsUrl + '/docs/guidance/variables'"
-          :icon="mdiBookOpenOutline"
-        />
-      </BaseButtons>
+              <td class="before:hidden lg:w-1 whitespace-nowrap">
+                <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                  <BaseButton
+                    color="lightdark"
+                    outline
+                    :icon="mdiPencil"
+                    small
+                    @click="
+                      () => {
+                        current = item;
+                        isModalActive = true;
+                      }
+                    "
+                  />
+                  <BaseButton
+                    color="danger"
+                    outline
+                    :icon="mdiTrashCan"
+                    small
+                    @click="
+                      () => {
+                        isModalDangerActive = true;
+                        current = reactive(item);
+                      }
+                    "
+                  />
+                </BaseButtons>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
+          <BaseLevel>
+            <BaseButtons>
+              <BaseButton
+                v-for="page in pagesList"
+                :key="page"
+                :active="page === currentPage"
+                :label="page + 1"
+                :color="page === currentPage ? 'lightDark' : 'whiteDark'"
+                small
+                @click="currentPage = page"
+              />
+            </BaseButtons>
+            <small
+              >共{{ items.length }}项，第{{ currentPageHuman }}页，共{{
+                numPages
+              }}页</small
+            >
+          </BaseLevel>
+        </div>
+        <BaseButtons class="mt-5">
+          <BaseButton
+            label="文档§定时任务"
+            color="whitedark"
+            target="_blank"
+            :href="docsUrl + '/docs/guidance/schedule'"
+            :icon="mdiBookOpenOutline"
+          />
+          <BaseButton
+            label="文档§变量"
+            color="whitedark"
+            target="_blank"
+            :href="docsUrl + '/docs/guidance/variables'"
+            :icon="mdiBookOpenOutline"
+          />
+        </BaseButtons>
+      </LoadingContainer>
     </SectionMain>
   </LayoutAuthenticated>
 </template>
