@@ -127,7 +127,7 @@ async function reload() {
         <BaseIcon :path="mdiCodeJson" />
         <span>类型</span>
         <span>
-          {{ { '1': 'JavaScript', '2': 'Net' }[current?.info.type] || '未知' }}
+          {{ [undefined, 'JavaScript', 'Net'][current?.info.type] || '未知' }}
         </span>
 
         <BaseIcon :path="mdiFileOutline" />
@@ -286,6 +286,7 @@ async function reload() {
               </tr>
             </tbody>
           </table>
+
           <div
             class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800"
           >

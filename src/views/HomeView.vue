@@ -1,31 +1,55 @@
 <script setup lang="ts">
+import CardBox from '@/components/CardBox.vue';
 import CardBoxWidget from '@/components/CardBoxWidget.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
-import { getCpuInfo, getMemoryStatus } from '@/services/apis/hardware';
+import { getAppInfo } from '@/services/apis';
+import { getCpuInfo, getMemoryStatus, getOS } from '@/services/apis/hardware';
 import { getServersWithCache } from '@/services/servers/management';
-import { CpuInfo, MemoryStatus } from '@/types/hardware';
+import { AppInfo } from '@/types/app';
+import { CpuInfo, MemoryStatus, OSInfo } from '@/types/hardware';
 import { Servers } from '@/types/server';
 import {
+  mdiChartLine,
   mdiCpu64Bit,
   mdiMemory,
   mdiMonitorDashboard,
   mdiServer,
 } from '@mdi/js';
-import { onUnmounted, reactive } from 'vue';
+import { onUnmounted, reactive, ref } from 'vue';
 
-const infos: { cpu?: CpuInfo; memory?: MemoryStatus; servers?: Servers } =
-  reactive({
-    cpu: undefined,
-    memory: undefined,
-    servers: undefined,
-  });
+const isLoading = ref(false);
+
+const infos: {
+  cpu?: CpuInfo;
+  memory?: MemoryStatus;
+  servers?: Servers;
+  app: AppInfo;
+  os?: OSInfo;
+} = reactive({
+  cpu: undefined,
+  memory: undefined,
+  servers: undefined,
+  app: undefined,
+  os: undefined,
+});
 
 async function update() {
-  infos.cpu = await getCpuInfo();
-  infos.memory = await getMemoryStatus();
-  infos.servers = await getServersWithCache();
+  if (isLoading.value) {
+    return;
+  }
+
+  isLoading.value = true;
+  try {
+    infos.os = await getOS();
+    infos.app = await getAppInfo();
+    infos.cpu = await getCpuInfo();
+    infos.memory = await getMemoryStatus();
+    infos.servers = await getServersWithCache();
+  } finally {
+    isLoading.value = false;
+  }
 }
 
 update();
@@ -52,8 +76,12 @@ onUnmounted(() => clearInterval(timer));
           :value="infos.cpu?.percentProcessorTime || 0"
           suffix="%"
           label="CPU"
-          :title="infos.cpu?.name"
-        />
+        >
+          <span class="text-xs text-gray-500">
+            {{ infos.cpu?.name }}
+          </span>
+        </CardBoxWidget>
+
         <CardBoxWidget
           color="text-yellow-500"
           :icon="mdiMemory"
@@ -68,23 +96,78 @@ onUnmounted(() => clearInterval(timer));
           "
           suffix="%"
           label="内存"
-          :title="
-            infos.memory?.totalPhysical
-              ? `${Math.floor((infos.memory.totalPhysical - infos.memory.availablePhysical) / 1024 / 1024)} / ${Math.floor(infos.memory.totalPhysical / 1024 / 1024)} MB`
-              : '-/-'
-          "
-        />
+        >
+          <span class="text-xs text-gray-500">
+            {{
+              infos.memory?.totalPhysical
+                ? `${((infos.memory.totalPhysical - infos.memory.availablePhysical) / 1024 / 1024 / 1024).toFixed(2)} / ${(infos.memory.totalPhysical / 1024 / 1024 / 1024).toFixed(2)} GB`
+                : '-/-'
+            }}
+          </span>
+        </CardBoxWidget>
+
         <CardBoxWidget
-          :icon="mdiServer"
           color="text-sky-500"
           label="服务器"
+          :icon="mdiServer"
           :value="
             infos.servers
               ? `${Object.entries(infos.servers).filter(([_, server]) => server.status).length} / ${Object.keys(infos.servers).length}`
               : '-/-'
           "
-        />
+        >
+        </CardBoxWidget>
       </div>
+
+      <SectionTitleLineWithButton
+        :icon="mdiChartLine"
+        title="详细信息"
+        no-button
+      >
+      </SectionTitleLineWithButton>
+      <CardBox>
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 mb-6">
+          <div>
+            <div>
+              <b> 系统名称 </b>
+            </div>
+            <div class="text-gray-500 dark:text-slate-400">
+              {{ infos.os?.name || '-' }}
+            </div>
+          </div>
+
+          <div>
+            <div>
+              <b> .NET 运行库版本 </b>
+            </div>
+            <code class="text-gray-500 dark:text-slate-400">
+              {{ infos.app?.clrVersion || '-' }}
+            </code>
+          </div>
+
+          <div>
+            <div>
+              <b> 进程 Id </b>
+            </div>
+            <code class="text-gray-500 dark:text-slate-400">
+              {{ infos.app?.processId || '-' }}
+            </code>
+          </div>
+
+          <div>
+            <div>
+              <b> 后端版本 </b>
+            </div>
+            <code
+              class="text-gray-500 dark:text-slate-400"
+              :title="infos.app?.fullVersion"
+            >
+              Serein.{{ ['Unknown', 'Cli', 'Lite', 'Plus'][infos.app?.type] }}
+              {{ infos.app?.version || '-' }}
+            </code>
+          </div>
+        </div>
+      </CardBox>
     </SectionMain>
   </LayoutAuthenticated>
 </template>

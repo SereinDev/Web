@@ -72,5 +72,7 @@ defineProps({
         :class="color"
       />
     </BaseLevel>
+
+    <slot></slot>
   </CardBox>
 </template>

@@ -26,7 +26,7 @@ router.beforeEach(() => {
   isAsideLgActive.value = false;
 });
 
-const menuClick = (event, item) => {
+const menuClick = (_event, item) => {
   if (item.isToggleLightDark) {
     darkModeStore.set();
   }
@@ -80,7 +80,7 @@ const menuClick = (event, item) => {
         @aside-lg-close-click="isAsideLgActive = false"
       />
       <slot />
-      <FooterBar />
+      <FooterBar class="sticky top-full" />
     </div>
   </div>
 </template>

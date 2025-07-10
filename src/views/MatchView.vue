@@ -32,11 +32,13 @@ import { useToast } from 'vue-toastification';
 const toast = useToast();
 const options = [
   { id: 0, label: '禁用' },
-  { id: 1, label: '服务器输入' },
-  { id: 2, label: '服务器输出' },
+  { id: 1, label: '服务器输出' },
+  { id: 2, label: '服务器输入' },
   { id: 3, label: '群聊消息' },
   { id: 4, label: '私聊消息' },
   { id: 5, label: '自身消息' },
+  { id: 6, label: '频道消息（Channel）' },
+  { id: 7, label: '群组消息（Guild）' },
 ];
 
 const current = ref({} as Match);

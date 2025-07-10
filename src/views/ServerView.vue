@@ -45,6 +45,7 @@ import { useToast } from 'vue-toastification';
 const toast = useToast();
 const id = computed(() => router.currentRoute.value.params['id'] as string);
 const timer = setInterval(update, 1000);
+let isLoading = false;
 
 const server = ref<Server>();
 const online = ref(true);
@@ -55,7 +56,12 @@ const inputRef = ref<{ inputEl: HTMLElement }>();
 const isModalActive = ref(false);
 
 async function update(refresh: boolean = false) {
+  if (isLoading) {
+    return;
+  }
+
   try {
+    isLoading = true;
     server.value = (await getServersWithCache(refresh))[id.value];
   } catch (error) {
     if (online.value) {
@@ -65,6 +71,7 @@ async function update(refresh: boolean = false) {
     online.value = false;
   }
 
+  isLoading = false;
   online.value = Boolean(server.value);
 }
 

@@ -5,6 +5,7 @@ import CardBox from '@/components/CardBox.vue';
 import CardBoxModal from '@/components/CardBoxModal.vue';
 import FormControl from '@/components/FormControl.vue';
 import FormField from '@/components/FormField.vue';
+import LoadingContainer from '@/components/LoadingContainer.vue';
 import NotificationBar from '@/components/NotificationBar.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
@@ -123,75 +124,77 @@ async function save() {
         />
       </SectionTitleLineWithButton>
 
-      <CardBox>
-        <FormField label="反应类型" help="选择要修改的反应类型">
-          <FormControl
-            v-model="reactionType"
-            class="max-w-60"
-            :options="options"
+      <LoadingContainer :is-loading="isLoading" use-mask>
+        <CardBox>
+          <FormField label="反应类型" help="选择要修改的反应类型">
+            <FormControl
+              v-model="reactionType"
+              class="max-w-60"
+              :options="options"
+            />
+          </FormField>
+        </CardBox>
+
+        <SectionTitleLineWithButton title="命令" :icon="mdiFormatListText">
+          <BaseButton
+            :icon="mdiPlus"
+            color="lightDark"
+            @click="commands = [...commands, '']"
           />
-        </FormField>
-      </CardBox>
+        </SectionTitleLineWithButton>
 
-      <SectionTitleLineWithButton title="命令" :icon="mdiFormatListText">
-        <BaseButton
-          :icon="mdiPlus"
-          color="lightDark"
-          @click="commands = [...commands, '']"
-        />
-      </SectionTitleLineWithButton>
-
-      <NotificationBar
-        v-if="commands.length === 0"
-        color="info"
-        :closable="false"
-      >
-        当前没有任何命令。你可以点击右上角的加号添加命令
-      </NotificationBar>
-
-      <CardBox>
-        <div
-          v-for="(item, key) in commands"
-          :key="key"
-          class="flex justify-between border-gray-200 dark:border-gray-700 border-b-2 mb-2 py-2"
+        <NotificationBar
+          v-if="commands.length === 0"
+          color="info"
+          :closable="false"
         >
-          <div>
-            <code>
-              {{ item }}
-            </code>
-          </div>
-          <div>
-            <BaseButtons no-wrap>
-              <BaseButton
-                outline
-                color="lightdark"
-                :icon="mdiPencil"
-                small
-                @click="
-                  () => {
-                    isModalActive = true;
-                    command = { command: item, key };
-                  }
-                "
-              />
-              <BaseButton
-                outline
-                color="danger"
-                :icon="mdiTrashCan"
-                small
-                @click="
-                  () => {
-                    commands.splice(key, 1);
-                    commands = [...commands];
-                  }
-                "
-              />
-            </BaseButtons>
-          </div>
-        </div>
+          当前没有任何命令。你可以点击右上角的加号添加命令
+        </NotificationBar>
 
-        <small>共{{ commands.length }}项</small>
-      </CardBox>
+        <CardBox>
+          <div
+            v-for="(item, key) in commands"
+            :key="key"
+            class="flex justify-between border-gray-200 dark:border-gray-700 border-b-2 mb-2 py-2"
+          >
+            <div>
+              <code>
+                {{ item }}
+              </code>
+            </div>
+            <div>
+              <BaseButtons no-wrap>
+                <BaseButton
+                  outline
+                  color="lightdark"
+                  :icon="mdiPencil"
+                  small
+                  @click="
+                    () => {
+                      isModalActive = true;
+                      command = { command: item, key };
+                    }
+                  "
+                />
+                <BaseButton
+                  outline
+                  color="danger"
+                  :icon="mdiTrashCan"
+                  small
+                  @click="
+                    () => {
+                      commands.splice(key, 1);
+                      commands = [...commands];
+                    }
+                  "
+                />
+              </BaseButtons>
+            </div>
+          </div>
+
+          <small>共{{ commands.length }}项</small>
+        </CardBox>
+      </LoadingContainer>
     </SectionMain>
   </LayoutAuthenticated>
 </template>

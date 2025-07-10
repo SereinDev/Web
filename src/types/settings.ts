@@ -52,7 +52,7 @@ export interface Settings {
     pluginEventMaxWaitingTime: number;
     jsGlobalAssemblies: string[];
     jsPatternToSkipLoadingSingleFile: string[];
-    disableBinderWhenServerClosed: boolean;
+    disableBindingManagerWhenServerClosed: boolean;
     regexForCheckingGameId: string;
     pattenForEnableMatchingMuiltLines: string[];
   };

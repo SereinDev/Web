@@ -73,7 +73,8 @@ update();
           />
         </BaseButtons>
       </SectionTitleLineWithButton>
-      <LoadingContainer class="min-h-80" :is-loading="isLoading">
+
+      <LoadingContainer :is-loading="isLoading">
         <div
           v-if="servers.length > 0"
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"
