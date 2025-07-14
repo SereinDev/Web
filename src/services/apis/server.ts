@@ -43,6 +43,10 @@ export async function stopServer(id: string): Promise<void> {
   await client.post<Packet<void>>(`/servers/${id}/stop`);
 }
 
+export async function restartServer(id: string): Promise<void> {
+  await client.post<Packet<void>>(`/servers/${id}/restart`);
+}
+
 export async function terminateServer(id: string): Promise<void> {
   await client.post<Packet<void>>(`/servers/${id}/terminate`);
 }

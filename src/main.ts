@@ -5,7 +5,7 @@ import { environment } from '@/utils/constants';
 import * as Sentry from '@sentry/vue';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
-import Toast, { PluginOptions } from 'vue-toastification';
+import Toast, { type PluginOptions, useToast } from 'vue-toastification';
 
 import '@/css/main.css';
 import 'vue-toastification/dist/index.css';
@@ -42,8 +42,19 @@ Sentry.init({
   environment,
 
   tracesSampleRate: 1.0,
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1.0,
+  replaysSessionSampleRate: 0,
+  replaysOnErrorSampleRate: 0.2,
 });
+
+app.config.errorHandler = (err, vm, info) => {
+  try {
+    const toast = useToast();
+    toast.error(err, {
+      timeout: false,
+    });
+  } catch {}
+
+  console.error('Error:', err, 'Info:', info);
+};
 
 app.mount('#app');

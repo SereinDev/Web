@@ -142,7 +142,7 @@ update();
         <FormControl v-model="current.regExp" type="text" autocomplete="none" />
       </FormField>
 
-      <div class="flex justify-center">
+      <div class="flex justify-center mt-6">
         <FormField
           label="匹配域"
           class="w-1/2"
@@ -162,9 +162,12 @@ update();
             type="checkbox"
             name="requireAdmin"
             :disabled="
-              ![MatchFieldType.GroupMsg, MatchFieldType.PrivateMsg].includes(
-                current.fieldType,
-              )
+              ![
+                MatchFieldType.GroupMsg,
+                MatchFieldType.PrivateMsg,
+                MatchFieldType.ChannelMsg,
+                MatchFieldType.GuildMsg,
+              ].includes(current.fieldType)
             "
             :input-value="false"
             label="需要管理员权限"

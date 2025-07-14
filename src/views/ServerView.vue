@@ -13,6 +13,7 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import router from '@/router';
 import {
   inputServer,
+  restartServer,
   startServer,
   stopServer,
   terminateServer,
@@ -75,7 +76,9 @@ async function update(refresh: boolean = false) {
   online.value = Boolean(server.value);
 }
 
-async function operate(type: 'start' | 'stop' | 'terminate' | 'input') {
+async function operate(
+  type: 'start' | 'stop' | 'terminate' | 'input' | 'restart',
+) {
   try {
     switch (type) {
       case 'start':
@@ -88,6 +91,10 @@ async function operate(type: 'start' | 'stop' | 'terminate' | 'input') {
 
       case 'terminate':
         await terminateServer(id.value);
+        break;
+
+      case 'restart':
+        await restartServer(id.value);
         break;
 
       case 'input':
@@ -233,7 +240,12 @@ onBeforeUnmount(() => serverEventPipe?.stop());
             label="停止"
             @click="() => operate('stop')"
           />
-          <BaseButton color="lightDark" :icon="mdiRefresh" label="重启" />
+          <BaseButton
+            color="lightDark"
+            :icon="mdiRefresh"
+            label="重启"
+            @click="() => operate('restart')"
+          />
           <BaseButton
             color="danger"
             :icon="mdiStop"

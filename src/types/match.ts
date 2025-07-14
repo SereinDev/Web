@@ -20,4 +20,8 @@ export enum MatchFieldType {
   PrivateMsg = 4,
 
   SelfMsg = 5,
+
+  ChannelMsg = 6,
+
+  GuildMsg = 7,
 }

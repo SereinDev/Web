@@ -42,8 +42,13 @@ async function update() {
 
   isLoading.value = true;
   try {
-    infos.os = await getOS();
-    infos.app = await getAppInfo();
+    if (!infos.os) {
+      infos.os = await getOS();
+    }
+    if (!infos.app) {
+      infos.app = await getAppInfo();
+    }
+
     infos.cpu = await getCpuInfo();
     infos.memory = await getMemoryStatus();
     infos.servers = await getServersWithCache();

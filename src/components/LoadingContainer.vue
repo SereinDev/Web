@@ -16,7 +16,10 @@ defineProps({
 </script>
 
 <template>
-  <div v-if="isLoading && !useMask" class="flex justify-center items-center">
+  <div
+    v-if="isLoading && !useMask"
+    class="flex justify-center items-center min-h-40"
+  >
     <BaseIcon
       :path="mdiLoading"
       class="animate-spin text-gray-500 dark:text-gray-400"
