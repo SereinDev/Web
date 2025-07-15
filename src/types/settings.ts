@@ -49,12 +49,12 @@ export interface Settings {
     enableSentry: boolean;
     theme: number;
     cliCommandHeader: string;
-    pluginEventMaxWaitingTime: number;
-    jsGlobalAssemblies: string[];
-    jsPatternToSkipLoadingSingleFile: string[];
-    disableBindingManagerWhenServerClosed: boolean;
-    regexForCheckingGameId: string;
-    pattenForEnableMatchingMuiltLines: string[];
+    maximumWaitTimeForPluginEvents: number;
+    jsDefaultAssemblies: string[];
+    jsFilesToExcludeFromLoading: string[];
+    disableBindingManagerWhenAllServersStopped: boolean;
+    gameIdValidationPattern: string;
+    multiLineMatchingPatterns: string[];
   };
 
   readonly reactions: {

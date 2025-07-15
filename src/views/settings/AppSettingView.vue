@@ -29,18 +29,18 @@ const toast = useToast();
 const isLoading = ref(true);
 const setting = ref({} as Settings['application']);
 
-const jsPatternToSkipLoadingSingleFile = computed({
-  get: () => setting.value.jsPatternToSkipLoadingSingleFile?.join('\n'),
+const jsFilesToExcludeFromLoading = computed({
+  get: () => setting.value.jsFilesToExcludeFromLoading?.join('\n'),
   set: (value: string) => {
-    setting.value.jsPatternToSkipLoadingSingleFile = value
+    setting.value.jsFilesToExcludeFromLoading = value
       .split('\n')
       .filter(Boolean);
   },
 });
-const jsGlobalAssemblies = computed({
-  get: () => setting.value.jsGlobalAssemblies?.join('\n'),
+const jsDefaultAssemblies = computed({
+  get: () => setting.value.jsDefaultAssemblies?.join('\n'),
   set: (value: string) => {
-    setting.value.jsGlobalAssemblies = value.split('\n').filter(Boolean);
+    setting.value.jsDefaultAssemblies = value.split('\n').filter(Boolean);
   },
 });
 
@@ -104,8 +104,8 @@ async function save() {
             help="超出此时间返回的结果将被忽略；设置成0可禁用等待"
           >
             <FormControl
-              v-model="setting.pluginEventMaxWaitingTime"
-              name="pluginEventMaxWaitingTime"
+              v-model="setting.maximumWaitTimeForPluginEvents"
+              name="maximumWaitTimeForPluginEvents"
               type="number"
               min="0"
               style="width: 200px"
@@ -116,8 +116,8 @@ async function save() {
             help="此处的程序集将会被所有JS插件加载（一行一个）"
           >
             <FormControl
-              v-model="jsGlobalAssemblies"
-              name="jsGlobalAssemblies"
+              v-model="jsDefaultAssemblies"
+              name="jsDefaultAssemblies"
               type="textarea"
               rows="3"
             />
@@ -127,8 +127,8 @@ async function save() {
             help="凡是以所选内容结尾的文件都不会被加载（一行一个）"
           >
             <FormControl
-              v-model="jsPatternToSkipLoadingSingleFile"
-              name="jsPatternToSkipLoadingSingleFile"
+              v-model="jsFilesToExcludeFromLoading"
+              name="jsFilesToExcludeFromLoading"
               type="textarea"
               rows="3"
             />
@@ -147,16 +147,16 @@ async function save() {
             help="绑定时游戏名称需要符合此正则"
           >
             <FormControl
-              v-model="setting.regexForCheckingGameId"
-              name="regexForCheckingGameId"
+              v-model="setting.gameIdValidationPattern"
+              name="gameIdValidationPattern"
               type="text"
             />
           </FormField>
           <FormField help="只影响通过Serein命令执行的绑定">
             <FormCheckRadio
-              v-model="setting.disableBindingManagerWhenServerClosed"
+              v-model="setting.disableBindingManagerWhenAllServersStopped"
               type="checkbox"
-              name="disableBindingManagerWhenServerClosed"
+              name="disableBindingManagerWhenAllServersStopped"
               :input-value="true"
               label="当服务器关闭时禁用绑定功能"
             />
@@ -171,8 +171,8 @@ async function save() {
             help="当输入的内容若含有以下内容将触发多行匹配（一行一个）"
           >
             <FormControl
-              v-model="setting.pattenForEnableMatchingMuiltLines"
-              name="pattenForEnableMatchingMuiltLines"
+              v-model="setting.multiLineMatchingPatterns"
+              name="multiLineMatchingPatterns"
               type="textarea"
               rows="3"
             />
