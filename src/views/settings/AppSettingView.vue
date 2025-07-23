@@ -43,6 +43,12 @@ const jsDefaultAssemblies = computed({
     setting.value.jsDefaultAssemblies = value.split('\n').filter(Boolean);
   },
 });
+const multiLineMatchingPatterns = computed({
+  get: () => setting.value.multiLineMatchingPatterns?.join('\n'),
+  set: (value: string) => {
+    setting.value.multiLineMatchingPatterns = value.split('\n').filter(Boolean);
+  },
+});
 
 getSettingsWithCache()
   .then(
@@ -50,7 +56,7 @@ getSettingsWithCache()
       setting.value = settings.application;
     },
     (error) => {
-      toast.error(`获取设置失败: ${error.message}`);
+      toast.error(`获取设置失败: ${error.message || error}`);
     },
   )
   .finally(() => {
@@ -68,7 +74,7 @@ async function save() {
     await updateApplicationSetting(setting.value);
     toast.success('保存设置成功');
   } catch (error) {
-    toast.error(`保存设置失败: ${error.message}`);
+    toast.error(`保存设置失败: ${error.message || error}`);
   } finally {
     isLoading.value = false;
   }
@@ -171,7 +177,7 @@ async function save() {
             help="当输入的内容若含有以下内容将触发多行匹配（一行一个）"
           >
             <FormControl
-              v-model="setting.multiLineMatchingPatterns"
+              v-model="multiLineMatchingPatterns"
               name="multiLineMatchingPatterns"
               type="textarea"
               rows="3"

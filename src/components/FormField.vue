@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { computed, useSlots } from 'vue';
 
-const props = defineProps({
+defineProps({
   label: {
     type: String,
     default: null,
+  },
+  required: {
+    type: Boolean,
+    default: false,
   },
   labelFor: {
     type: String,
@@ -42,6 +46,7 @@ const wrapperClass = computed(() => {
       class="block font-bold mb-2 select-none"
     >
       {{ label }}
+      <span v-if="required" class="text-red-500">*</span>
     </label>
     <div :class="wrapperClass">
       <slot />

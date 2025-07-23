@@ -63,7 +63,7 @@ getSettingsWithCache()
     setting.value = settings.reactions;
   })
   .catch((error) => {
-    toast.error(`获取设置失败: ${error.message}`);
+    toast.error(`获取设置失败: ${error.message || error}`);
   })
   .finally(() => {
     isLoading.value = false;
@@ -91,7 +91,7 @@ async function save() {
     await updateReactionSetting(setting.value);
     toast.success('保存设置成功');
   } catch (error) {
-    toast.error(`保存设置失败: ${error.message}`);
+    toast.error(`保存设置失败: ${error.message || error}`);
   } finally {
     isLoading.value = false;
   }

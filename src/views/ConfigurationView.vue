@@ -207,6 +207,7 @@ async function remove() {
           <div class="grid grid-cols-1 md:grid-cols-2 md:gap-10">
             <FormField
               label="Id"
+              :required="!readonly"
               :help="`用于区分服务器（一经填写无法修改）
 · 长度大于或等于3
 · 只由数字、字母和下划线组成`"
@@ -370,7 +371,10 @@ async function remove() {
           <div class="grid grid-cols-1 md:grid-cols-2 md:gap-10 mb-5 md:mb-0">
             <FormField
               label="IPv4端口"
-              help="服务器的IPv4端口，用于获取服务器相关信息（版本、在线玩家数）"
+              :help="`服务器的IPv4端口，用于获取服务器相关信息（版本、在线玩家数）
+· 基岩版服务器默认端口为 19132
+· Java版服务器默认端口为 25565
+· 将此项设置为0将会禁用此功能`"
             >
               <FormControl
                 v-model="configuration.portIPv4"
