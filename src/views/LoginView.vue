@@ -16,6 +16,7 @@ import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 
+const useToken = ref(false);
 const checked = ref(false);
 const mainStore = useMainStore();
 const form = reactive({
@@ -77,38 +78,65 @@ if (!checked.value) {
           />
           <b class="font-black break-keep select-none text-lg">{{ name }}</b>
         </div>
-        <FormField label="Authorization Token" help="登录凭证">
-          <FormControl
-            v-model="form.accessToken"
-            :icon="mdiFormTextboxPassword"
-            type="password"
-            name="password"
+
+        <div v-if="!useToken">
+          <FormField
+            label="在浏览器的弹出窗口中输入用户名与密码后继续..."
+            :help="`可以在设置-网页-权限中生成和查看`"
+          />
+        </div>
+        <div v-else>
+          <FormField
+            label="登录令牌 / Token"
+            :help="`可以在设置-网页-权限中生成和查看`"
+          >
+            <FormControl
+              v-model="form.accessToken"
+              :icon="mdiFormTextboxPassword"
+              type="password"
+              name="password"
+              @update:model-value="update"
+            />
+          </FormField>
+
+          <FormCheckRadio
+            v-model="form.remember"
+            name="remember"
+            label="保存登录状态"
+            title="将令牌保存在本地"
+            :input-value="true"
             @update:model-value="update"
           />
-        </FormField>
 
-        <FormCheckRadio
-          v-model="form.remember"
-          name="remember"
-          label="保存登录状态"
-          title="将Authorization Token保存在本地"
-          :input-value="true"
-          @update:model-value="update"
-        />
-
-        <NotificationBar
-          v-if="form.remember"
-          class="mt-3"
-          :icon="mdiAlert"
-          color="warning"
-        >
-          不要在不受信任的设备上启用此选项
-        </NotificationBar>
+          <NotificationBar
+            v-if="form.remember"
+            class="mt-3"
+            :icon="mdiAlert"
+            color="warning"
+          >
+            不要在不受信任的设备上启用此选项
+          </NotificationBar>
+        </div>
 
         <template #footer>
-          <BaseButtons>
+          <BaseButtons v-if="useToken">
+            <BaseButton
+              outline
+              color="info"
+              label="返回"
+              class="mr-5"
+              @click="useToken = false"
+            />
             <BaseButton type="submit" color="info" label="登录" />
           </BaseButtons>
+
+          <div
+            v-else
+            class="text-sm hover:text-blue-500 cursor-pointer transition-colors"
+            @click="useToken = true"
+          >
+            使用旧版的令牌登录 →
+          </div>
         </template>
       </CardBox>
     </SectionFullScreen>

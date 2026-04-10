@@ -39,7 +39,7 @@ const componentClass = computed(() => {
   return base;
 });
 
-const submit = (event) => {
+const submit = (event: Event) => {
   emit('submit', event);
 };
 </script>

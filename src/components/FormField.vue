@@ -24,7 +24,7 @@ const slots = useSlots();
 
 const wrapperClass = computed(() => {
   const base = [];
-  const slotsLength = slots.default().length;
+  const slotsLength = slots.default?.()?.length ?? 0;
 
   if (slotsLength > 1) {
     base.push('grid grid-cols-1 gap-3');

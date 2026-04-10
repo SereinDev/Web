@@ -167,7 +167,7 @@ onUnmounted(() => clearInterval(timer));
               class="text-gray-500 dark:text-slate-400"
               :title="infos.app?.fullVersion"
             >
-              Serein.{{ ['Unknown', 'Cli', 'Lite', 'Plus'][infos.app?.type] }}
+              Serein.{{ ['Unknown', 'Console', 'Plus'][infos.app?.type] }}
               {{ infos.app?.version || '-' }}
             </code>
           </div>

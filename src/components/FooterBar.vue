@@ -8,7 +8,7 @@ import { gitInfo } from '@/utils/constants';
   <footer class="py-4 px-6" :class="containerMaxW">
     <BaseLevel>
       <div class="text-center md:text-left text-sm">
-        <b>&copy;2025, SereinDev.</b>
+        <b>&copy;2026, SereinDev.</b>
         Powered by
         <a
           href="https://sereindev.github.io/"

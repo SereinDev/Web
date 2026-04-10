@@ -66,7 +66,7 @@ async function save() {
   try {
     await updateWebApiSetting(setting.value);
     toast.success('保存设置成功');
-  } catch (error) {
+  } catch (error: any) {
     toast.error(`保存设置失败: ${error.message || error}`);
   } finally {
     isLoading.value = false;
@@ -159,17 +159,6 @@ async function save() {
             <FormControl
               v-model="whiteList"
               name="whiteList"
-              type="textarea"
-              rows="3"
-            />
-          </FormField>
-          <FormField
-            label="访问凭证"
-            help="若值不为空，请求时“/api”下的任意资源均需要在请求头中添加Authentication项，即“Authentication: Bearer [Token]”"
-          >
-            <FormControl
-              v-model="accessTokens"
-              name="accessTokens"
               type="textarea"
               rows="3"
             />
