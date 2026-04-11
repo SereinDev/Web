@@ -4,7 +4,7 @@ import { ref } from 'vue';
 export const useDarkModeStore = defineStore('darkMode', () => {
   const isEnabled = ref(false);
 
-  function set(payload = null) {
+  function set(payload: boolean | null = null) {
     isEnabled.value = payload !== null ? payload : !isEnabled.value;
 
     if (typeof document !== 'undefined') {

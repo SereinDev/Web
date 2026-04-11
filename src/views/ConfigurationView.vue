@@ -70,9 +70,11 @@ const defaultValue = reactive({
 
 const isLoading = ref(false);
 const isModalDangerActive = ref(false);
-const pathId = (router.currentRoute.value.params['id'] as string) || '';
-const readonly = pathId !== ':new';
-const id = ref(readonly ? pathId : '');
+const pathId = computed(
+  () => (router.currentRoute.value.params['id'] as string) || '',
+);
+const readonly = pathId.value !== ':new';
+const id = ref(readonly ? pathId.value : '');
 const configuration = ref<Configuration>(defaultValue);
 const stopCommands = computed({
   get: () => configuration.value.stopCommands.join('\n'),
@@ -183,6 +185,7 @@ async function remove() {
           />
           <BaseButton
             :icon="mdiFileDocumentCheckOutline"
+            outline
             color="info"
             :label="readonly ? '保存' : '创建'"
             @click="confirm"
@@ -190,6 +193,7 @@ async function remove() {
           <BaseButton
             v-if="readonly"
             :icon="mdiDelete"
+            outline
             color="danger"
             label="删除"
             @click="isModalDangerActive = true"

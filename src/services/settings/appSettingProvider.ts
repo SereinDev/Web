@@ -2,7 +2,7 @@ import { getSettings } from '@/services/apis/settings';
 import { Settings } from '@/types/settings';
 
 let settings: Settings | undefined = undefined;
-let date: number = undefined;
+let date: number | undefined = undefined;
 
 export async function getSettingsWithCache(
   refresh: boolean = false,

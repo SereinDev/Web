@@ -1,7 +1,11 @@
 export interface AppInfo {
   version: string;
   fullVersion: string;
-  type: 0 | 1 | 2 ;
+  type: 0 | 1 | 2;
   clrVersion: string;
   processId: number;
+}
+
+export interface WsTicket {
+  ticket: string;
 }

@@ -42,7 +42,7 @@ getAppInfo().then((res) => (appInfo.value = res));
         <div class="p-2">
           <div class="font-bold">后端版本</div>
           <code v-if="appInfo" class="select-all break-all">
-            Serein.{{ ['Unknown', 'Console', 'Plus'][appInfo?.type] }}@{{
+            Serein.{{ ['Unknown', 'Console', 'Gui'][appInfo?.type] }}@{{
               appInfo?.fullVersion
             }}
           </code>

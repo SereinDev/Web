@@ -24,9 +24,3 @@ export async function updateWebApiSetting(
 ): Promise<void> {
   await client.put<Packet<null>>('/settings/web-api', setting);
 }
-
-export async function updateReactionSetting(
-  setting: Settings['reactions'],
-): Promise<void> {
-  await client.put<Packet<null>>('/settings/reactions', setting);
-}

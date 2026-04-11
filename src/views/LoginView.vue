@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import BaseButton from '@/components/BaseButton.vue';
 import BaseButtons from '@/components/BaseButtons.vue';
+import BaseIcon from '@/components/BaseIcon.vue';
 import CardBox from '@/components/CardBox.vue';
 import FormCheckRadio from '@/components/FormCheckRadio.vue';
 import FormControl from '@/components/FormControl.vue';
@@ -11,11 +12,15 @@ import LayoutGuest from '@/layouts/LayoutGuest.vue';
 import { getRoot } from '@/services/apis';
 import { useMainStore } from '@/stores/main';
 import { name } from '@/utils/constants';
-import { mdiAlert, mdiFormTextboxPassword } from '@mdi/js';
+import { mdiAlert, mdiFormTextboxPassword, mdiLoading } from '@mdi/js';
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 
+const tip = `· Serein.Gui：在设置-网页-权限中管理或查看
+· Serein.Console：手动修改 ./Serein/web-authentications.json 文件后重启`;
+
+const isLoading = ref(false);
 const useToken = ref(false);
 const checked = ref(false);
 const mainStore = useMainStore();
@@ -36,15 +41,25 @@ async function submit() {
 
 async function check(): Promise<boolean> {
   try {
+    isLoading.value = true;
     const response = await getRoot();
 
     if (response.status === 200) {
-      router.push({ name: 'overview' });
+      if (
+        typeof router.currentRoute.value.query.redirect === 'string' &&
+        router.currentRoute.value.query.redirect != '/login'
+      ) {
+        router.push(router.currentRoute.value.query.redirect);
+      } else {
+        router.push({ name: 'overview' });
+      }
     }
 
     return true;
   } catch (error) {
     return false;
+  } finally {
+    isLoading.value = false;
   }
 }
 
@@ -69,6 +84,19 @@ if (!checked.value) {
 <template>
   <LayoutGuest>
     <SectionFullScreen v-slot="{ cardClass }" bg="purplePink">
+      <div
+        v-if="isLoading"
+        class="flex justify-center items-center fixed inset-0 z-50 pointer-events-none"
+      >
+        <BaseIcon
+          :path="mdiLoading"
+          class="animate-spin text-gray-500 dark:text-gray-400"
+          size="50"
+          w="20"
+          h="20"
+        />
+      </div>
+
       <CardBox :class="cardClass" is-form @submit.prevent="submit">
         <div class="mb-10">
           <img
@@ -82,14 +110,11 @@ if (!checked.value) {
         <div v-if="!useToken">
           <FormField
             label="在浏览器的弹出窗口中输入用户名与密码后继续..."
-            :help="`可以在设置-网页-权限中生成和查看`"
+            :help="tip"
           />
         </div>
         <div v-else>
-          <FormField
-            label="登录令牌 / Token"
-            :help="`可以在设置-网页-权限中生成和查看`"
-          >
+          <FormField label="登录令牌 / Token" :help="tip">
             <FormControl
               v-model="form.accessToken"
               :icon="mdiFormTextboxPassword"
@@ -130,12 +155,24 @@ if (!checked.value) {
             <BaseButton type="submit" color="info" label="登录" />
           </BaseButtons>
 
-          <div
-            v-else
-            class="text-sm hover:text-blue-500 cursor-pointer transition-colors"
-            @click="useToken = true"
-          >
-            使用旧版的令牌登录 →
+          <div v-else class="">
+            <hr />
+            <div class="text-xs mt-3 mb-1 text-gray-500">无弹出窗口？</div>
+            <div class="flex text-sm">
+              <div
+                class="hover:text-sky-500 cursor-pointer transition-colors"
+                @click="check()"
+              >
+                重试
+              </div>
+              <div class="mx-2">|</div>
+              <div
+                class="hover:text-sky-500 cursor-pointer transition-colors"
+                @click="useToken = true"
+              >
+                使用旧版的令牌登录 →
+              </div>
+            </div>
           </div>
         </template>
       </CardBox>

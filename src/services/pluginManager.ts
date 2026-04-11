@@ -1,24 +1,11 @@
 import localSettingManager from '@/services/settings/localSettingManager';
 import { WebSocketPipe } from '@/services/webSocketPipe';
-import { useMainStore } from '@/stores/main';
 import { PipePacket } from '@/types/packet';
 import { ref } from 'vue';
 
-export const pipe = new WebSocketPipe(() => {
-  let url =
-    (location.protocol === 'https:' ? 'wss://' : 'ws://') +
-    `${location.host}/ws/plugins`;
+export const pipe = new WebSocketPipe('/ws/plugins');
 
-  const token = useMainStore().accessToken;
-
-  if (token) {
-    url += `?token=${encodeURIComponent(token)}`;
-  }
-
-  return url;
-});
-
-pipe.start();
+pipe.startAsync();
 pipe.onMessage = (data: MessageEvent) => {
   const packet = JSON.parse(data.data) as PipePacket;
   if (['serein', 'information', 'warning', 'error'].includes(packet.type)) {

@@ -1,5 +1,5 @@
 import client from '@/services/apis/client';
-import { type AppInfo } from '@/types/app';
+import { WsTicket, type AppInfo } from '@/types/app';
 import { type Packet } from '@/types/packet';
 import { AxiosResponse } from 'axios';
 
@@ -10,4 +10,11 @@ export async function getRoot(): Promise<AxiosResponse> {
 export async function getAppInfo(): Promise<AppInfo> {
   const response = await client.get<Packet<AppInfo>>('/');
   return response.data.data;
+}
+
+export async function getWsTicket(path: string) {
+  const response = await client.get<Packet<WsTicket>>(
+    '/ws/ticket?path=' + path,
+  );
+  return response.data.data.ticket;
 }

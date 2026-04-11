@@ -27,7 +27,7 @@ export interface Settings {
   };
 
   readonly webApi: {
-    isEnabled: boolean;
+    startWhenSettingUp: boolean;
     urlPrefixes: string[];
     allowCrossOrigin: boolean;
     maxRequestsPerSecond: number;
@@ -56,21 +56,4 @@ export interface Settings {
     gameIdValidationPattern: string;
     multiLineMatchingPatterns: string[];
   };
-
-  readonly reactions: {
-    [key: string | ReactionType]: string[];
-  };
 }
-
-export type ReactionType =
-  | 'ServerStart'
-  | 'ServerExitedNormally'
-  | 'ServerExitedUnexpectedly'
-  | 'GroupIncreased'
-  | 'GroupDecreased'
-  | 'GroupPoke'
-  | 'BindingSucceeded'
-  | 'UnbindingSucceeded'
-  | 'PermissionDeniedFromPrivateMsg'
-  | 'PermissionDeniedFromGroupMsg'
-  | 'SereinCrash';

@@ -34,9 +34,9 @@ export const colorsOutline = {
 };
 
 export const getButtonColor = (
-  color,
-  isOutlined,
-  hasHover,
+  color: string,
+  isOutlined: boolean,
+  hasHover: boolean,
   isActive = false,
 ) => {
   const colors = {

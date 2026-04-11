@@ -11,15 +11,40 @@ importers:
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
+      '@sentry/vue':
+        specifier: ^8.55.1
+        version: 8.55.1(pinia@3.0.4(typescript@5.8.3)(vue@3.5.32(typescript@5.8.3)))(vue@3.5.32(typescript@5.8.3))
+      ansi_up:
+        specifier: ^6.0.6
+        version: 6.0.6
+      axios:
+        specifier: ^1.15.0
+        version: 1.15.0
+      html-entities:
+        specifier: ^2.6.0
+        version: 2.6.0
+      numeral:
+        specifier: ^2.0.6
+        version: 2.0.6
+      pinia:
+        specifier: ^3.0.4
+        version: 3.0.4(typescript@5.8.3)(vue@3.5.32(typescript@5.8.3))
+      vue:
+        specifier: ^3.5.32
+        version: 3.5.32(typescript@5.8.3)
+      vue-router:
+        specifier: ^4.6.4
+        version: 4.6.4(vue@3.5.32(typescript@5.8.3))
+      vue-toastification:
+        specifier: 2.0.0-rc.5
+        version: 2.0.0-rc.5(vue@3.5.32(typescript@5.8.3))
+    devDependencies:
       '@rushstack/eslint-patch':
         specifier: ^1.16.1
         version: 1.16.1
       '@sentry/vite-plugin':
         specifier: ^3.6.1
         version: 3.6.1
-      '@sentry/vue':
-        specifier: ^8.55.1
-        version: 8.55.1(pinia@3.0.4(typescript@5.8.3)(vue@3.5.32(typescript@5.8.3)))(vue@3.5.32(typescript@5.8.3))
       '@tailwindcss/forms':
         specifier: ^0.5.11
         version: 0.5.11(tailwindcss@4.2.2)
@@ -32,18 +57,9 @@ importers:
       '@vue/eslint-config-prettier':
         specifier: ^8.0.0
         version: 8.0.0(eslint@9.28.0(jiti@2.6.1))(prettier@3.8.2)
-      ansi_up:
-        specifier: ^6.0.6
-        version: 6.0.6
       autoprefixer:
         specifier: ^10.4.27
         version: 10.4.27(postcss@8.5.9)
-      axios:
-        specifier: ^1.15.0
-        version: 1.15.0
-      chart.js:
-        specifier: ^4.5.1
-        version: 4.5.1
       eslint-plugin-prettier:
         specifier: ^5.5.5
         version: 5.5.5(eslint-config-prettier@8.10.2(eslint@9.28.0(jiti@2.6.1)))(eslint@9.28.0(jiti@2.6.1))(prettier@3.8.2)
@@ -53,18 +69,9 @@ importers:
       git-revision-vite-plugin:
         specifier: ^0.0.11
         version: 0.0.11
-      html-entities:
-        specifier: ^2.6.0
-        version: 2.6.0
       husky:
         specifier: ^9.1.7
         version: 9.1.7
-      numeral:
-        specifier: ^2.0.6
-        version: 2.0.6
-      pinia:
-        specifier: ^3.0.4
-        version: 3.0.4(typescript@5.8.3)(vue@3.5.32(typescript@5.8.3))
       prettier:
         specifier: ^3.8.2
         version: 3.8.2
@@ -77,15 +84,6 @@ importers:
       vite:
         specifier: ^6.4.2
         version: 6.4.2(jiti@2.6.1)(lightningcss@1.32.0)(yaml@2.8.0)
-      vue:
-        specifier: ^3.5.32
-        version: 3.5.32(typescript@5.8.3)
-      vue-router:
-        specifier: ^4.6.4
-        version: 4.6.4(vue@3.5.32(typescript@5.8.3))
-      vue-toastification:
-        specifier: 2.0.0-rc.5
-        version: 2.0.0-rc.5(vue@3.5.32(typescript@5.8.3))
 
 packages:
 
@@ -385,9 +383,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
-
-  '@kurkle/color@0.3.4':
-    resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
 
   '@mdi/js@7.4.47':
     resolution: {integrity: sha512-KPnNOtm5i2pMabqZxpUz7iQf+mfrYZyKCZ8QNz85czgEt7cuHcGorWfdzUMWYA0SD+a6Hn4FmJ+YhzzzjkTZrQ==}
@@ -952,10 +947,6 @@ packages:
   chalk@4.1.2:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
-
-  chart.js@4.5.1:
-    resolution: {integrity: sha512-GIjfiT9dbmHRiYi6Nl2yFCq7kkwdkp1W/lp2J99rX0yo9tgJGn3lKQATztIjb5tVtevcBtIdICNWqlq5+E8/Pw==}
-    engines: {pnpm: '>=8'}
 
   chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
@@ -2095,8 +2086,6 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@kurkle/color@0.3.4': {}
-
   '@mdi/js@7.4.47': {}
 
   '@pkgr/core@0.2.9': {}
@@ -2639,10 +2628,6 @@ snapshots:
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
-
-  chart.js@4.5.1:
-    dependencies:
-      '@kurkle/color': 0.3.4
 
   chokidar@3.6.0:
     dependencies:

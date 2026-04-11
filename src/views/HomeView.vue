@@ -21,13 +21,13 @@ import { onUnmounted, reactive, ref } from 'vue';
 
 const isLoading = ref(false);
 
-const infos: {
+const infos = reactive<{
   cpu?: CpuInfo;
   memory?: MemoryStatus;
   servers?: Servers;
-  app: AppInfo;
+  app?: AppInfo;
   os?: OSInfo;
-} = reactive({
+}>({
   cpu: undefined,
   memory: undefined,
   servers: undefined,
@@ -167,7 +167,7 @@ onUnmounted(() => clearInterval(timer));
               class="text-gray-500 dark:text-slate-400"
               :title="infos.app?.fullVersion"
             >
-              Serein.{{ ['Unknown', 'Console', 'Plus'][infos.app?.type] }}
+              Serein.{{ ['Unknown', 'Console', 'Gui'][infos?.app?.type || 0] }}
               {{ infos.app?.version || '-' }}
             </code>
           </div>

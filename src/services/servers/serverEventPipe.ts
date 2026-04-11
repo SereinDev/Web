@@ -3,7 +3,6 @@ import { getServerHistory } from '@/services/apis/server';
 import { getServersWithCache } from '@/services/servers/management';
 import localSettingManager from '@/services/settings/localSettingManager';
 import { WebSocketPipe } from '@/services/webSocketPipe';
-import { useMainStore } from '@/stores/main';
 import { PipePacket } from '@/types/packet';
 import type { Server } from '@/types/server';
 import { environment } from '@/utils/constants';
@@ -17,16 +16,8 @@ export class ServerEventPipe extends WebSocketPipe {
   private server: Ref<Server>;
 
   public constructor(id: string, serverRef: Ref<Server>) {
-    super(() => {
-      const url =
-        (location.protocol === 'https:' ? 'wss://' : 'ws://') +
-        `${location.host}/ws/server?` +
-        new URLSearchParams({
-          id,
-          token: useMainStore().accessToken || undefined,
-        }).toString();
-
-      return url;
+    super('/ws/server', {
+      id,
     });
 
     this.id = id;
@@ -43,7 +34,7 @@ export class ServerEventPipe extends WebSocketPipe {
     };
 
     this.onClose = async () => {
-      if (!(await getServersWithCache()[this.id])) {
+      if (!(await getServersWithCache())[this.id]) {
         return;
       }
 
@@ -52,7 +43,7 @@ export class ServerEventPipe extends WebSocketPipe {
 
     this.onMessage = this.handleMessage;
 
-    this.start();
+    this.startAsync();
   }
 
   public restore(serverRef: Ref<Server>) {
@@ -63,7 +54,7 @@ export class ServerEventPipe extends WebSocketPipe {
       this.ws.readyState === WebSocket.CLOSED ||
       this.ws.readyState === WebSocket.CLOSING
     ) {
-      this.start();
+      this.startAsync();
     }
   }
 

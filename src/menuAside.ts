@@ -1,11 +1,10 @@
 import {
-  mdiClockOutline,
   mdiCogs,
   mdiConnection,
-  mdiFormatListBulleted,
   mdiMonitorDashboard,
-  mdiPuzzleOutline,
-  mdiServerOutline,
+  mdiPuzzle,
+  mdiRobot,
+  mdiServer,
 } from '@mdi/js';
 
 export default [
@@ -17,17 +16,12 @@ export default [
   {
     to: 'servers',
     label: '服务器',
-    icon: mdiServerOutline,
+    icon: mdiServer,
   },
   {
-    to: 'matches',
-    label: '匹配',
-    icon: mdiFormatListBulleted,
-  },
-  {
-    to: 'schedules',
-    label: '定时任务',
-    icon: mdiClockOutline,
+    to: 'automations',
+    label: '自动化任务',
+    icon: mdiRobot,
   },
   {
     to: 'connection',
@@ -37,7 +31,7 @@ export default [
   {
     to: 'plugins',
     label: '插件',
-    icon: mdiPuzzleOutline,
+    icon: mdiPuzzle,
   },
   // {
   //   to: '/permissions',
@@ -56,10 +50,6 @@ export default [
       {
         to: 'settings.connection',
         label: '连接',
-      },
-      {
-        to: 'settings.reaction',
-        label: '反应',
       },
       {
         to: 'settings.webapi',

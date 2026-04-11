@@ -11,12 +11,12 @@ client.defaults.headers.post = client.defaults.headers.put = {
   'Content-Type': 'application/json',
 };
 
-client.interceptors.request.use((value) => {
+client.interceptors.request.use((cfg) => {
   const mainStore = useMainStore();
   if (mainStore.accessToken) {
-    value.headers.Authorization = `Bearer ${mainStore.accessToken}`;
+    cfg.headers.Authorization = `Bearer ${mainStore.accessToken}`;
   }
-  return value;
+  return cfg;
 });
 
 client.interceptors.response.use(undefined, (err) => {
@@ -26,7 +26,10 @@ client.interceptors.response.use(undefined, (err) => {
       err.request instanceof XMLHttpRequest &&
       new URL(err.request.responseURL).pathname !== '/api/'
     ) {
-      router.push({ name: 'login' });
+      router.push({
+        name: 'login',
+        query: { redirect: router.currentRoute.value.path },
+      });
       toast.error('需要访问凭证或访问凭证无效');
     }
 

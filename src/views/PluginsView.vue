@@ -34,7 +34,7 @@ import {
 import { computed, ref } from 'vue';
 import { useToast } from 'vue-toastification';
 
-pipe.start();
+pipe.startAsync();
 
 const isLoading = ref(false);
 const isModalInfoActive = ref(false);
@@ -127,7 +127,9 @@ async function reload() {
         <BaseIcon :path="mdiCodeJson" />
         <span>类型</span>
         <span>
-          {{ [undefined, 'JavaScript', 'Net'][current?.info.type] || '未知' }}
+          {{
+            [undefined, 'JavaScript', 'Net'][current?.info.type || 0] || '未知'
+          }}
         </span>
 
         <BaseIcon :path="mdiFileOutline" />

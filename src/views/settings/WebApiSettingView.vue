@@ -24,7 +24,10 @@ import { useToast } from 'vue-toastification';
 
 const toast = useToast();
 const isLoading = ref(true);
-const setting = ref({ certificate: {}, isEnabled: true } as Settings['webApi']);
+const setting = ref({
+  certificate: {},
+  startWhenSettingUp: true,
+} as Settings['webApi']);
 
 const urlPrefixes = computed({
   get: () => setting.value.urlPrefixes?.join('\n'),
@@ -92,14 +95,18 @@ async function save() {
       </SectionTitleLineWithButton>
 
       <LoadingContainer :is-loading="isLoading" use-mask>
-        <CardBox :disabled="!setting.isEnabled">
-          <FormField>
+        <CardBox :disabled="!setting.startWhenSettingUp">
+          <FormField
+            :help="`· 开启后会在Serein启动后自动启动网页服务器
+· 这不会影响当前网页服务器的状态
+· 无法使用网页控制台关闭网页服务器`"
+          >
             <FormCheckRadio
-              v-model="setting.isEnabled"
+              v-model="setting.startWhenSettingUp"
               type="checkbox"
-              name="isEnabled"
+              name="startWhenSettingUp"
               :input-value="true"
-              label="启用"
+              label="自动启动网页服务器"
             />
           </FormField>
         </CardBox>
@@ -107,6 +114,7 @@ async function save() {
         <NotificationBar class="my-5" color="info" :icon="mdiInformation">
           以下设置将在网页服务器重启后生效
         </NotificationBar>
+
         <SectionTitleLineWithButton
           title="常规"
           no-button

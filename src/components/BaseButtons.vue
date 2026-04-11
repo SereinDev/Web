@@ -1,9 +1,5 @@
-<script setup>
-defineOptions({
-  name: 'BaseButtons',
-});
-
-defineProps({
+<script setup lang="ts">
+const props = defineProps({
   noWrap: Boolean,
   type: {
     type: String,
@@ -30,6 +26,11 @@ defineProps({
       mb,
     ]"
   >
-    <slot />
+    <component
+      :is="item"
+      v-for="(item, index) in $slots?.default?.() ?? $slots"
+      :key="index"
+      :class="classAddon"
+    />
   </div>
 </template>

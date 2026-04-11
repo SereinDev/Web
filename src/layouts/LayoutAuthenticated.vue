@@ -26,14 +26,20 @@ router.beforeEach(() => {
   isAsideLgActive.value = false;
 });
 
-const menuClick = (_event, item) => {
+const menuClick = (
+  _event: any,
+  item: { isToggleLightDark?: boolean; isLogout?: boolean },
+) => {
   if (item.isToggleLightDark) {
     darkModeStore.set();
   }
 
   if (item.isLogout) {
     mainStore.accessToken = '';
-    router.push({ name: 'login' });
+    router.push({
+      name: 'login',
+      query: { redirect: router.currentRoute.value.path },
+    });
   }
 };
 </script>

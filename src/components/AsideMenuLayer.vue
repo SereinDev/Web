@@ -3,7 +3,7 @@ import AsideMenuItem from '@/components/AsideMenuItem.vue';
 import AsideMenuList from '@/components/AsideMenuList.vue';
 import BaseIcon from '@/components/BaseIcon.vue';
 import { name } from '@/utils/constants';
-import { mdiClose, mdiInformationOutline } from '@mdi/js';
+import { mdiClose, mdiInformation } from '@mdi/js';
 import { computed } from 'vue';
 
 defineProps({
@@ -17,15 +17,15 @@ const emit = defineEmits(['menu-click', 'aside-lg-close-click']);
 
 const bottomItem = computed(() => ({
   label: '关于',
-  icon: mdiInformationOutline,
+  icon: mdiInformation,
   to: 'about',
 }));
 
-const menuClick = (event, item) => {
+const menuClick = (event: Event, item: any) => {
   emit('menu-click', event, item);
 };
 
-const asideLgCloseClick = (event) => {
+const asideLgCloseClick = (event: Event) => {
   emit('aside-lg-close-click', event);
 };
 </script>

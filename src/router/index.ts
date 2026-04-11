@@ -44,19 +44,11 @@ const routes: RouteRecordRaw[] = [
   },
   {
     meta: {
-      title: '匹配',
+      title: '自动化任务',
     },
-    path: '/matches',
-    name: 'matches',
-    component: () => import('@/views/MatchView.vue'),
-  },
-  {
-    meta: {
-      title: '匹配',
-    },
-    path: '/schedules',
-    name: 'schedules',
-    component: () => import('@/views/ScheduleView.vue'),
+    path: '/automations',
+    name: 'automations',
+    component: () => import('@/views/AutomationView.vue'),
   },
   {
     meta: {
@@ -89,14 +81,6 @@ const routes: RouteRecordRaw[] = [
     path: '/settings/connection',
     name: 'settings.connection',
     component: () => import('@/views/settings/ConnectionSettingView.vue'),
-  },
-  {
-    meta: {
-      title: '反应设置',
-    },
-    path: '/settings/reaction',
-    name: 'settings.reaction',
-    component: () => import('@/views/settings/ReactionSettingView.vue'),
   },
   {
     meta: {

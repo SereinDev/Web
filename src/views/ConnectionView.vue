@@ -32,7 +32,7 @@ const status = ref<ConnectionStatus>({} as ConnectionStatus);
 const timer = setInterval(update, 2000);
 const toast = useToast();
 
-pipe.start();
+pipe.startAsync();
 onBeforeUnmount(() => clearInterval(timer));
 update();
 
